@@ -34,22 +34,16 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-// im http from;
-import http from "@/utils/request.ts";
+<script setup>
+import http from "@/utils/request.js";
 import { ref, reactive } from "vue";
-import type { FormInstance, FormRules } from "element-plus";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
-interface RuleForm {
-  username: string;
-  password: string;
-}
-const ruleFormRef = ref<FormInstance>();
-const ruleForm = reactive<RuleForm>({
+const ruleFormRef = ref();
+const ruleForm = reactive({
   username: "",
   password: "",
 });
-const rules = reactive<FormRules<RuleForm>>({
+const rules = reactive({
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
     {
@@ -60,18 +54,18 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 });
 // const $axios = inject("$axios");
-const submitForm = async (formEl: FormInstance | undefined) => {
+const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
       console.log(ruleForm);
-      http.post("/v1/user/login", ruleForm).then((res) => res.data);
+      http.post("/api/v1/user/login", ruleForm).then((res) => res.data);
     } else {
       console.log("error submit!", fields);
     }
   });
 };
-const resetForm = (formEl: FormInstance | undefined) => {
+const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
 };

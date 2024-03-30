@@ -3,7 +3,7 @@
     <h2>404</h2>
   </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import {ref,reactive} from "vue"
 </script>
 <style lang="scss" scoped>
