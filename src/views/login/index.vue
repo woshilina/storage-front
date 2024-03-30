@@ -2,11 +2,7 @@
   <div class="login_container">
     <div class="login_box">
       <div class="login_left hidden-md-and-down">
-        <img
-          class="login-left-img"
-          src="@/assets/images/login_left.png"
-          alt="login"
-        />
+        <img class="login-left-img" src="@/assets/images/login_left.png" alt="login" />
       </div>
       <div class="login_right">
         <div class="login-logo">
@@ -24,37 +20,14 @@
           class="demo-ruleForm"
         >
           <el-form-item prop="username">
-            <el-input
-              v-model="ruleForm.username"
-              placeholder="用户名"
-              :prefix-icon="User"
-            />
+            <el-input v-model="ruleForm.username" placeholder="用户名" :prefix-icon="User" />
           </el-form-item>
           <el-form-item prop="password">
-            <el-input
-              v-model="ruleForm.password"
-              type="password"
-              placeholder="密码"
-              show-password
-              :prefix-icon="Lock"
-              autocomplete="off"
-            />
+            <el-input v-model="ruleForm.password" type="password" placeholder="密码" show-password :prefix-icon="Lock" autocomplete="off" />
           </el-form-item>
           <el-form-item class="login-btns">
-            <el-button
-              @click="resetForm(ruleFormRef)"
-              round
-              size="large"
-              :icon="CircleClose"
-              >重置</el-button
-            >
-            <el-button
-              type="primary"
-              @click="submitForm(ruleFormRef)"
-              round
-              :icon="UserFilled"
-              >登录</el-button
-            >
+            <el-button @click="resetForm(ruleFormRef)" round size="large" :icon="CircleClose">重置</el-button>
+            <el-button type="primary" @click="submitForm(ruleFormRef)" round :icon="UserFilled">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -62,6 +35,8 @@
   </div>
 </template>
 <script setup lang="ts">
+// im http from;
+import http from "@/utils/request.ts";
 import { ref, reactive } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
@@ -84,11 +59,13 @@ const rules = reactive<FormRules<RuleForm>>({
     },
   ],
 });
+// const $axios = inject("$axios");
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!");
+      console.log(ruleForm);
+      http.post("/v1/user/login", ruleForm).then((res) => res.data);
     } else {
       console.log("error submit!", fields);
     }

@@ -10,9 +10,11 @@ import 'element-plus/theme-chalk/display.css'
 import router from '@/router'
 import App from '@/App.vue'
 
+
 // createApp(App).mount('#app')
 const app = createApp(App);
 
+// app.provide('$axios', axios)
 app.use(ElementPlus, {
   locale: zhCn,
 })
