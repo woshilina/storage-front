@@ -53,7 +53,6 @@ const rules = reactive({
     },
   ],
 });
-// const $axios = inject("$axios");
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
