@@ -1,15 +1,47 @@
 <template>
   <div class="home">
+    <el-form :inline="true" ref="queryRef" :model="query" :rules="queryRules" class="demo-form-inline">
+      <el-row :gutter="20">
+        <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="query.name" placeholder="姓名" clearable style="width: 100%" />
+          </el-form-item>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+          <el-form-item label="性别" prop="sex">
+            <el-select v-model="query.sex" placeholder="性别" clearable style="display: block; width: 100%">
+              <el-option label="男" value="1" />
+              <el-option label="女" value="2" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+          <el-form-item label="年龄段" prop="age">
+            <div class="inputrange">
+              <el-input v-model.number="query.fromAge" placeholder="起始年龄" clearable />
+              <div class="inputrange_line">-</div>
+              <el-input v-model.number="query.toAge" placeholder="终止年龄" clearable />
+            </div>
+          </el-form-item>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+          <el-form-item>
+            <el-button type="primary" @click="onQuery">查询</el-button>
+            <el-button type="info" @click="onEmpty">清空</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
     <el-table :data="resultData.tableData" style="width: 100%">
-      <el-table-column type="index" width="50" :index="indexMethod" />
-      <el-table-column prop="name" label="姓名" width="180" />
+      <el-table-column type="index" label="序号" :index="indexMethod" width="80" />
+      <el-table-column prop="name" label="姓名" />
       <el-table-column prop="sex" label="性别">
         <template #default="scope">
           <div>{{ scope.row.sex == "1" ? "男" : "女" }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="age" label="年龄" width="180" />
+      <el-table-column prop="age" label="年龄" />
       <el-table-column prop="IDNo" label="身份证号码" />
       <el-table-column prop="email" label="邮箱" />
       <el-table-column prop="avatar" label="头像" />
@@ -70,8 +102,15 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
 import http from "@/utils/request.js";
-import { Plus, Delete, Edit } from "@element-plus/icons-vue";
+import { Plus, Delete, Edit, Message, MessageBox } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage } from "element-plus";
+const query = reactive({
+  name: "",
+  sex: "",
+  fromAge: "",
+  toAge: "",
+});
+
 let dialogVisible = ref(false);
 let title = ref("新增");
 let resultData = reactive({ tableData: [] });
@@ -84,26 +123,61 @@ const indexMethod = (index) => {
   return indexi;
 };
 onMounted(() => {
-  getPersonnels(currentPage, pageSize);
+  getPersonnels();
 });
 
 //获取表格数据方法
-const getPersonnels = (currentPage, pageSize) => {
-  const params = { currentPage: currentPage.value, pageSize: pageSize.value };
+const getPersonnels = () => {
+  const queryParams = {};
+  Object.keys(query).forEach((key) => {
+    if (query[key]!=='') {
+      queryParams[key] = query[key];
+    }
+  });
+  const params = { currentPage: currentPage.value, pageSize: pageSize.value, ...queryParams };
   http.get("/api/v1/personnel/all", { params }).then((res) => {
     resultData.tableData = res.data.data;
     total = res.data.total;
   });
 };
+const checkAge = (rule, value, callback) => {
+  if (query.fromAge === "" || query.toAge === "") {
+    return callback(new Error("请完整输入年龄范围"));
+  } else if (query.fromAge > query.toAge) {
+    return callback(new Error("起始年龄应不大于终止年龄"));
+  } else {
+    callback();
+  }
+};
+const queryRules = reactive({
+  age: [{ validator: checkAge, trigger: "blur" }],
+});
+//查询
+const onQuery = async () => {
+  if (query.fromAge === "") {
+    MessageBox;
+  }
+  getPersonnels();
+};
+
+//清空查询
+const onEmpty = () => {
+  Object.keys(query).forEach((key) => {
+    if (query[key] || query[key] == 0) {
+      query[key] = "";
+    }
+  });
+  getPersonnels();
+};
 
 const handleSizeChange = (val) => {
   pageSize.value = val;
-  getPersonnels(currentPage, pageSize);
+  getPersonnels();
 };
 
 const handleCurrentChange = (val) => {
   currentPage.value = val;
-  getPersonnels(currentPage, pageSize);
+  getPersonnels();
 };
 
 const formRef = ref();
@@ -271,6 +345,17 @@ const handleClose = (done) => {
 <style lang="scss" scoped>
 .home {
   padding: 30px;
+  .el-form-item {
+    width: 100%;
+  }
+  .inputrange {
+    display: inline-flex;
+    flex-grow: 1;
+    .inputrange_line {
+      margin: 0 8px;
+    }
+  }
+
   .home_pagination {
     margin: 20px;
     justify-content: right;
