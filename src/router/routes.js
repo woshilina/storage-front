@@ -6,8 +6,8 @@ export const constRoutes=[
     },
     {
       path: "/",
-      component: () => import("@/views/home/index.vue"),
-      name: "home",
+      component: () => import("@/views/personnel/PersonnelIndex.vue"),
+      name: "personnel",
     },
     {
         path: "/404",

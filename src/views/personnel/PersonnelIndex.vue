@@ -33,7 +33,7 @@
       </el-row>
     </el-form>
     <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
-    <el-table :data="resultData.tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号" :index="indexMethod" width="80" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="sex" label="性别">
@@ -99,10 +99,11 @@
     </el-dialog>
   </div>
 </template>
+
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
 import http from "@/utils/request.js";
-import { Plus, Delete, Edit, Message, MessageBox } from "@element-plus/icons-vue";
+import { Plus, Delete, Edit, MessageBox } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 const query = reactive({
   name: "",
@@ -111,13 +112,15 @@ const query = reactive({
   toAge: "",
 });
 
-let dialogVisible = ref(false);
-let title = ref("新增");
-let resultData = reactive({ tableData: [] });
+const dialogVisible = ref(false);
+const title = ref("新增");
 
+// let resultData = reactive({ tableData: [] });
+const tableData = ref([]);
+// resultData.value = [];
 const currentPage = ref(1);
 const pageSize = ref(10);
-let total = ref(0);
+const total = ref(0);
 const indexMethod = (index) => {
   const indexi = index + 1 + (currentPage.value - 1) * pageSize.value;
   return indexi;
@@ -130,14 +133,14 @@ onMounted(() => {
 const getPersonnels = () => {
   const queryParams = {};
   Object.keys(query).forEach((key) => {
-    if (query[key]!=='') {
+    if (query[key] !== "") {
       queryParams[key] = query[key];
     }
   });
   const params = { currentPage: currentPage.value, pageSize: pageSize.value, ...queryParams };
   http.get("/api/v1/personnel/all", { params }).then((res) => {
-    resultData.tableData = res.data.data;
-    total = res.data.total;
+    tableData.value = res.data.data;
+    total.value = res.data.total;
   });
 };
 const checkAge = (rule, value, callback) => {
@@ -222,14 +225,14 @@ const rules = reactive({
   ],
   IDNo: [{ validator: validateID, trigger: "blur" }],
 });
-const resetFormData = () => {
-  form.name = "";
-  form.sex = "";
-  form.age = "";
-  form.IDNo = "";
-  form.avatar = "";
-  form.email = "";
-};
+// const resetFormData = () => {
+//   form.name = "";
+//   form.sex = "";
+//   form.age = "";
+//   form.IDNo = "";
+//   form.avatar = "";
+//   form.email = "";
+// };
 //点击新增
 const handleAdd = () => {
   title.value = "新增";
@@ -317,7 +320,7 @@ const handleDelete = (index, row) => {
           });
         }
       });
-      done();
+      // done();
     })
     .catch(() => {
       // catch error
