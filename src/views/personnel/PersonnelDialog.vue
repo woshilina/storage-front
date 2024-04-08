@@ -32,7 +32,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, nextTick, watch } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
@@ -49,10 +49,9 @@ const form = reactive({
   avatar: '',
   email: ''
 })
-watch(formId, async (newId, oldId) => {
-  console.log(newId, oldId)
-  if (newId) {
-    await http.get(`/api/v1/personnel/${newId}`).then(res => {
+watch(dialogVisible, async (newValue) => {
+  if (newValue && title.value == '编辑') {
+    await http.get(`/api/v1/personnel/${formId.value}`).then(res => {
       Object.assign(form, res.data)
     })
   }
@@ -157,11 +156,7 @@ const handleClose = (done) => {
   ElMessageBox.confirm('确定关闭对话框吗?')
     .then(() => {
       formRef.value.resetFields()
-      nextTick(() => {
-        // formRef.value.resetFields()
-        // resetForm(formRef.value); //重置表单 不起作用
-        done()
-      })
+      done()
     })
     .catch(() => {
       // catch error
