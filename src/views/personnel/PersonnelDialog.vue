@@ -2,7 +2,7 @@
   <el-dialog v-model="dialogVisible" :title="props.title" width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
       <el-form-item label="姓名" prop="name">
-        <el-input v-model="form.name" autocomplete="off" />
+        <el-input v-model="form.name" placeholder="请输入姓名"/>
       </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select v-model="form.sex" placeholder="请选择性别">
@@ -11,16 +11,16 @@
         </el-select>
       </el-form-item>
       <el-form-item label="年龄" prop="age">
-        <el-input v-model.number="form.age" autocomplete="off" />
+        <el-input v-model.number="form.age" placeholder="请输入年龄"/>
       </el-form-item>
       <el-form-item label="身份证号" prop="IDNo">
-        <el-input v-model="form.IDNo" autocomplete="off" />
+        <el-input v-model="form.IDNo" placeholder="请输入身份证号"/>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" autocomplete="off" />
+        <el-input v-model="form.email" placeholder="请输入邮箱"/>
       </el-form-item>
       <el-form-item label="头像" prop="avatar">
-        <el-input v-model="form.avatar" autocomplete="off" />
+        <el-input v-model="form.avatar" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -37,7 +37,7 @@ import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const dialogVisible = defineModel('dialogVisible')
-const props = defineProps(['title','formId'])
+const props = defineProps(['title', 'formId'])
 const emit = defineEmits(['getPersonnels'])
 const formRef = ref()
 const form = reactive({
@@ -50,14 +50,13 @@ const form = reactive({
 })
 watch(dialogVisible, async (newValue) => {
   if (newValue && props.title == '编辑') {
-    await http.get(`/api/v1/personnel/${props.formId}`).then(res => {
+    await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
       Object.assign(form, res.data)
     })
   }
 })
 const validateID = (rule, value, callback) => {
-  let _IDRe18 =
-    /^([1-6][1-9]|50)\d{4}(18|19|20)\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+  let _IDRe18 = /^([1-6][1-9]|50)\d{4}(18|19|20)\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
   let _IDre15 = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}$/
   // 校验身份证：
   if (value) {
@@ -89,9 +88,9 @@ const rules = reactive({
   IDNo: [{ validator: validateID, trigger: 'blur' }]
 })
 //保存
-const submitForm = async () => {
+const submitForm = () => {
   if (!formRef.value) return
-  await formRef.value.validate((valid, fields) => {
+  formRef.value.validate((valid, fields) => {
     if (valid) {
       if (props.title == '新增') {
         addSave()

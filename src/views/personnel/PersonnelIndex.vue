@@ -1,15 +1,15 @@
 <template>
   <div class="person-home">
-    <el-form :inline="true" ref="queryRef" :model="query" :rules="queryRules" class="demo-form-inline">
+    <el-form :inline="true" ref="queryRef" :model="query" :rules="queryRules">
       <el-row :gutter="20">
         <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
           <el-form-item label="姓名" prop="name">
-            <el-input v-model="query.name" placeholder="姓名" clearable style="width: 100%" />
+            <el-input v-model="query.name" placeholder="姓名" clearable />
           </el-form-item>
         </el-col>
         <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
           <el-form-item label="性别" prop="sex">
-            <el-select v-model="query.sex" placeholder="性别" clearable style="display: block; width: 100%">
+            <el-select v-model="query.sex" placeholder="性别" clearable>
               <el-option label="男" value="1" />
               <el-option label="女" value="2" />
             </el-select>
@@ -27,7 +27,7 @@
         <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
           <el-form-item>
             <el-button type="primary" @click="onQuery">查询</el-button>
-            <el-button type="primary" plain @click="onEmpty">清空</el-button>
+            <el-button @click="onEmpty">清空</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,7 +48,7 @@
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <Edit style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: #409eff" @click="handleEdit(scope.$index, scope.row)" />
-          <Delete style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: red" @click="handleDelete(scope.$index, scope.row)"></Delete>
+          <Delete style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: red" @click="handleDelete(scope.$index, scope.row)" />
         </template>
       </el-table-column>
     </el-table>
@@ -63,7 +63,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <PersonnelDialog v-model:dialogVisible="dialogVisible" :title="title" :formId="formId" @get-personnels="getPersonnels"></PersonnelDialog>
+    <PersonnelDialog v-model:dialog-visible="dialogVisible" :title="title" :form-id="formId" @get-personnels="getPersonnels"></PersonnelDialog>
   </div>
 </template>
 
@@ -109,8 +109,10 @@ const getPersonnels = () => {
   })
 }
 const checkAge = (rule, value, callback) => {
-  if (query.fromAge === '' || query.toAge === '') {
+  if (!String(query.fromAge) || !query.toAge) {
     return callback(new Error('请完整输入年龄范围'))
+  } else if (!Number.isInteger(query.fromAge) || !Number.isInteger(query.toAge)) {
+    return callback(new Error('请输入整数'))
   } else if (query.fromAge > query.toAge) {
     return callback(new Error('起始年龄应不大于终止年龄'))
   } else {
