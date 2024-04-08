@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="title" width="500" :before-close="handleClose">
+  <el-dialog v-model="dialogVisible" :title="props.title" width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
       <el-form-item label="姓名" prop="name">
         <el-input v-model="form.name" autocomplete="off" />
@@ -25,8 +25,8 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="cancel(formRef)">Cancel</el-button>
-        <el-button type="primary" @click="submitForm(formRef)">确定</el-button>
+        <el-button @click="cancel()">取消</el-button>
+        <el-button type="primary" @click="submitForm()">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -37,8 +37,7 @@ import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const dialogVisible = defineModel('dialogVisible')
-const title = defineModel('title')
-const formId = defineModel('formId')
+const props = defineProps(['title','formId'])
 const emit = defineEmits(['getPersonnels'])
 const formRef = ref()
 const form = reactive({
@@ -50,8 +49,8 @@ const form = reactive({
   email: ''
 })
 watch(dialogVisible, async (newValue) => {
-  if (newValue && title.value == '编辑') {
-    await http.get(`/api/v1/personnel/${formId.value}`).then(res => {
+  if (newValue && props.title == '编辑') {
+    await http.get(`/api/v1/personnel/${props.formId}`).then(res => {
       Object.assign(form, res.data)
     })
   }
@@ -68,7 +67,6 @@ const validateID = (rule, value, callback) => {
       callback(new Error('请输入正确的身份证号码'))
     }
   } else {
-    // formRef.value.validateField('IDNo', () => null)
     callback()
   }
 }
@@ -95,7 +93,7 @@ const submitForm = async () => {
   if (!formRef.value) return
   await formRef.value.validate((valid, fields) => {
     if (valid) {
-      if (title.value == '新增') {
+      if (props.title == '新增') {
         addSave()
       } else {
         editSave()

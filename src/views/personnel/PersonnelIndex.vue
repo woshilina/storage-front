@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="person-home">
     <el-form :inline="true" ref="queryRef" :model="query" :rules="queryRules" class="demo-form-inline">
       <el-row :gutter="20">
         <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
@@ -27,7 +27,7 @@
         <el-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
           <el-form-item>
             <el-button type="primary" @click="onQuery">查询</el-button>
-            <el-button type="info" @click="onEmpty">清空</el-button>
+            <el-button type="primary" plain @click="onEmpty">清空</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -42,23 +42,28 @@
         </template>
       </el-table-column>
       <el-table-column prop="age" label="年龄" />
-      <el-table-column prop="IDNo" label="身份证号码" min-width="120px"/>
-      <el-table-column prop="email" label="邮箱"  min-width="120px"/>
+      <el-table-column prop="IDNo" label="身份证号码" min-width="120px" />
+      <el-table-column prop="email" label="邮箱" min-width="120px" />
       <el-table-column prop="avatar" label="头像" />
       <el-table-column label="操作" width="180">
         <template #default="scope">
-          <Edit style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: #409eff"
-            @click="handleEdit(scope.$index, scope.row)" />
-          <Delete style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: red"
-            @click="handleDelete(scope.$index, scope.row)"></Delete>
+          <Edit style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: #409eff" @click="handleEdit(scope.$index, scope.row)" />
+          <Delete style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: red" @click="handleDelete(scope.$index, scope.row)"></Delete>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="home_pagination" background v-model:current-page="currentPage" v-model:page-size="pageSize"
-      :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" :total="total"
-      @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    <PersonnelDialog v-model:dialogVisible="dialogVisible" v-model:title="title" v-model:formId="formId"
-      @get-personnels="getPersonnels"></PersonnelDialog>
+    <el-pagination
+      class="home_pagination"
+      background
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :page-sizes="[10, 20, 50, 100]"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+    <PersonnelDialog v-model:dialogVisible="dialogVisible" :title="title" :formId="formId" @get-personnels="getPersonnels"></PersonnelDialog>
   </div>
 </template>
 
@@ -66,7 +71,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import PersonnelDialog from './PersonnelDialog.vue'
 import http from '@/utils/request.js'
-import { Plus, Delete, Edit, MessageBox } from '@element-plus/icons-vue'
+import { Plus, Delete, Edit } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 const query = reactive({
   name: '',
@@ -77,7 +82,6 @@ const query = reactive({
 const formId = ref('')
 const dialogVisible = ref(false)
 const title = ref('新增')
-
 const tableData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -116,11 +120,9 @@ const checkAge = (rule, value, callback) => {
 const queryRules = reactive({
   age: [{ validator: checkAge, trigger: 'blur' }]
 })
+
 //查询
-const onQuery = async () => {
-  if (query.fromAge === '') {
-    MessageBox
-  }
+const onQuery = () => {
   getPersonnels()
 }
 
@@ -180,8 +182,8 @@ const handleDelete = (index, row) => {
     })
 }
 </script>
-<style lang="scss" scoped>
-.home {
+<style lang="scss">
+.person-home {
   padding: 30px;
 
   .el-form-item {
