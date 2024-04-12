@@ -1,8 +1,8 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="props.title" width="500" :before-close="handleClose">
+  <el-dialog v-model="dialogVisible" :title="title" width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
       <el-form-item label="姓名" prop="name">
-        <el-input v-model="form.name" placeholder="请输入姓名"/>
+        <el-input v-model="form.name" placeholder="请输入姓名" />
       </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select v-model="form.sex" placeholder="请选择性别">
@@ -11,13 +11,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="年龄" prop="age">
-        <el-input v-model.number="form.age" placeholder="请输入年龄"/>
+        <el-input v-model.number="form.age" placeholder="请输入年龄" />
       </el-form-item>
       <el-form-item label="身份证号" prop="IDNo">
-        <el-input v-model="form.IDNo" placeholder="请输入身份证号"/>
+        <el-input v-model="form.IDNo" placeholder="请输入身份证号" />
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" placeholder="请输入邮箱"/>
+        <el-input v-model="form.email" placeholder="请输入邮箱" />
       </el-form-item>
       <el-form-item label="头像" prop="avatar">
         <el-input v-model="form.avatar" />
@@ -37,8 +37,9 @@ import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const dialogVisible = defineModel('dialogVisible')
-const props = defineProps(['title', 'formId'])
+const props = defineProps(['formId'])
 const emit = defineEmits(['getPersonnels'])
+const title = ref('新增')
 const formRef = ref()
 const form = reactive({
   name: '',
@@ -49,7 +50,12 @@ const form = reactive({
   email: ''
 })
 watch(dialogVisible, async (newValue) => {
-  if (newValue && props.title == '编辑') {
+  if (newValue && props.formId) {
+    title.value = '编辑'
+  } else {
+    title.value = '新增'
+  }
+  if (newValue && title.value == '编辑') {
     await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
       Object.assign(form, res.data)
     })
@@ -92,7 +98,7 @@ const submitForm = () => {
   if (!formRef.value) return
   formRef.value.validate((valid, fields) => {
     if (valid) {
-      if (props.title == '新增') {
+      if (title.value == '新增') {
         addSave()
       } else {
         editSave()

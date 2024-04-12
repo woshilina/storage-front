@@ -63,7 +63,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <PersonnelDialog v-model:dialog-visible="dialogVisible" :title="title" :form-id="formId" @get-personnels="getPersonnels"></PersonnelDialog>
+    <PersonnelDialog v-model:dialog-visible="dialogVisible" :form-id="formId" @get-personnels="getPersonnels"></PersonnelDialog>
   </div>
 </template>
 
@@ -81,7 +81,6 @@ const query = reactive({
 })
 const formId = ref('')
 const dialogVisible = ref(false)
-const title = ref('新增')
 const tableData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -150,14 +149,13 @@ const handleCurrentChange = (val) => {
 
 //点击新增
 const handleAdd = () => {
-  title.value = '新增'
+  formId.value = ''
   dialogVisible.value = true
 }
 
 //点击行编辑
 const handleEdit = (index, row) => {
   formId.value = row.id
-  title.value = '编辑'
   dialogVisible.value = true
 }
 //点击行删除
