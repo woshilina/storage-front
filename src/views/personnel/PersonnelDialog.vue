@@ -1,6 +1,6 @@
 <template>
   <el-dialog v-model="dialogVisible" :title="title" width="500" :before-close="handleClose">
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" v-loading="formLoading" element-loading-background="rgba(255,255,255,0.6)">
       <el-form-item label="姓名" prop="name">
         <el-input v-model="form.name" placeholder="请输入姓名" />
       </el-form-item>
@@ -26,14 +26,15 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="cancel()">取消</el-button>
-        <el-button type="primary" @click="submitForm()">确定</el-button>
+        <el-button type="primary" @click="submitForm()" :loading="formLoading">确定</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import http from '@/utils/request.js'
+import { validateID } from '@/utils/validate.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const dialogVisible = defineModel('dialogVisible')
@@ -49,32 +50,36 @@ const form = reactive({
   avatar: '',
   email: ''
 })
-watch(dialogVisible, async (newValue) => {
-  if (newValue && props.formId) {
+const isEdit = computed(() => {
+  return !!props.formId
+})
+const formLoading = ref(false)
+watch(dialogVisible, async (dialogVisibleValue) => {
+  if (dialogVisibleValue && props.formId) {
     title.value = '编辑'
+    getFormItems()
   } else {
     title.value = '新增'
   }
-  if (newValue && title.value == '编辑') {
-    await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
-      Object.assign(form, res.data)
-    })
-  }
 })
-const validateID = (rule, value, callback) => {
-  let _IDRe18 = /^([1-6][1-9]|50)\d{4}(18|19|20)\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
-  let _IDre15 = /^([1-6][1-9]|50)\d{4}\d{2}((0[1-9])|10|11|12)(([0-2][1-9])|10|20|30|31)\d{3}$/
-  // 校验身份证：
-  if (value) {
-    if (_IDRe18.test(value) || _IDre15.test(value)) {
-      callback()
-    } else {
-      callback(new Error('请输入正确的身份证号码'))
+
+// 获取form详情
+const getFormItems = async () => {
+  formLoading.value = true
+  await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
+    const { id, name, sex, age, IDNo, avatar, email } = res.data
+    if (props.formId == id) {
+      formLoading.value = false
+      form.name = name
+      form.sex = sex
+      form.age = age
+      form.IDNo = IDNo
+      form.avatar = avatar
+      form.email = email
     }
-  } else {
-    callback()
-  }
+  })
 }
+
 const rules = reactive({
   name: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
@@ -93,12 +98,13 @@ const rules = reactive({
   ],
   IDNo: [{ validator: validateID, trigger: 'blur' }]
 })
-//保存
+
+// 提交
 const submitForm = () => {
   if (!formRef.value) return
   formRef.value.validate((valid, fields) => {
     if (valid) {
-      if (title.value == '新增') {
+      if (!isEdit.value) {
         addSave()
       } else {
         editSave()
@@ -108,9 +114,12 @@ const submitForm = () => {
     }
   })
 }
+
 //新增保存
 const addSave = () => {
+  formLoading.value = true
   http.post('/api/v1/personnel/add', form).then((res) => {
+    formLoading.value = false
     if (res.data.status == '200') {
       resetForm(formRef.value) //重置表单
       dialogVisible.value = false
@@ -127,9 +136,20 @@ const addSave = () => {
     }
   })
 }
+
 // 编辑保存
 const editSave = () => {
-  http.patch(`/api/v1/personnel/${form.id}`, form).then((res) => {
+  formLoading.value = true
+  const editData = {
+    name: form.name,
+    age: form.age,
+    sex: form.sex,
+    IDNo: form.IDNo,
+    avatar: form.avatar,
+    email: form.email
+  }
+  http.put(`/api/v1/personnel/${props.formId}`, editData).then((res) => {
+    formLoading.value = false
     if (res.data.status == '200') {
       resetForm(formRef.value) //重置表单
       dialogVisible.value = false
@@ -159,6 +179,7 @@ const handleClose = (done) => {
   ElMessageBox.confirm('确定关闭对话框吗?')
     .then(() => {
       formRef.value.resetFields()
+      formLoading.value = false
       done()
     })
     .catch(() => {
@@ -166,4 +187,4 @@ const handleClose = (done) => {
     })
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss"></style>
