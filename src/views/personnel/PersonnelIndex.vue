@@ -33,7 +33,7 @@
       </el-row>
     </el-form>
     <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" v-loading="loading">
       <el-table-column type="index" label="序号" :index="indexMethod" width="80" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="sex" label="性别">
@@ -85,7 +85,7 @@ const tableData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
-
+const loading = ref(true)
 const indexMethod = (index) => {
   return index + 1 + (currentPage.value - 1) * pageSize.value
 }
@@ -96,6 +96,7 @@ onMounted(() => {
 
 //获取表格数据方法
 const getPersonnels = () => {
+  loading.value = true
   const queryParams = {}
   Object.keys(query).forEach((key) => {
     if (query[key] !== '') {
@@ -103,10 +104,16 @@ const getPersonnels = () => {
     }
   })
   const params = { currentPage: currentPage.value, pageSize: pageSize.value, ...queryParams }
-  http.get('/api/v1/personnel/all', { params }).then((res) => {
-    tableData.value = res.data.data
-    total.value = res.data.total
-  })
+  http
+    .get('/api/v1/personnel/all', { params })
+    .then((res) => {
+      tableData.value = res.data.data
+      total.value = res.data.total
+      loading.value = false
+    })
+    .catch(() => {
+      loading.value = false
+    })
 }
 
 const checkAge = (rule, value, callback) => {
@@ -120,6 +127,7 @@ const checkAge = (rule, value, callback) => {
     callback()
   }
 }
+
 const queryRules = reactive({
   age: [{ validator: checkAge, trigger: 'blur' }]
 })
@@ -160,6 +168,7 @@ const handleEdit = (index, row) => {
   formId.value = row.id
   dialogVisible.value = true
 }
+
 //点击行删除
 const handleDelete = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')
