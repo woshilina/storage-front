@@ -85,10 +85,11 @@ const tableData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+
 const indexMethod = (index) => {
-  const indexi = index + 1 + (currentPage.value - 1) * pageSize.value
-  return indexi
+  return index + 1 + (currentPage.value - 1) * pageSize.value
 }
+
 onMounted(() => {
   getPersonnels()
 })
@@ -107,6 +108,7 @@ const getPersonnels = () => {
     total.value = res.data.total
   })
 }
+
 const checkAge = (rule, value, callback) => {
   if (!String(query.fromAge) || !query.toAge) {
     return callback(new Error('请完整输入年龄范围'))
