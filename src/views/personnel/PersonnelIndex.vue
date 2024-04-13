@@ -63,7 +63,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <PersonnelDialog v-model:dialog-visible="dialogVisible" :form-id="formId" @get-personnels="getPersonnels"></PersonnelDialog>
+    <PersonnelDialog v-if="isOpenDialog" :form-id="formId" @get-personnels="getPersonnels" @close-dialog="closeDialog"> </PersonnelDialog>
   </div>
 </template>
 
@@ -80,7 +80,7 @@ const query = reactive({
   toAge: ''
 })
 const formId = ref('')
-const dialogVisible = ref(false)
+const isOpenDialog = ref(false)
 const tableData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -114,6 +114,9 @@ const getPersonnels = () => {
     .catch(() => {
       loading.value = false
     })
+}
+const closeDialog = () => {
+  isOpenDialog.value = false
 }
 
 const checkAge = (rule, value, callback) => {
@@ -160,13 +163,13 @@ const handleCurrentChange = (val) => {
 //点击新增
 const handleAdd = () => {
   formId.value = ''
-  dialogVisible.value = true
+  isOpenDialog.value = true
 }
 
 //点击行编辑
 const handleEdit = (index, row) => {
+  isOpenDialog.value = true
   formId.value = row.id
-  dialogVisible.value = true
 }
 
 //点击行删除

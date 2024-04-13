@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="title" width="500" :before-close="handleClose">
+  <el-dialog :model-value="true" :title="title" width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" v-loading="formLoading" element-loading-background="rgba(255,255,255,0.6)">
       <el-form-item label="姓名" prop="name">
         <el-input v-model="form.name" placeholder="请输入姓名" />
@@ -32,14 +32,12 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import http from '@/utils/request.js'
 import { validateID } from '@/utils/validate.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
-
-const dialogVisible = defineModel('dialogVisible')
 const props = defineProps(['formId'])
-const emit = defineEmits(['getPersonnels'])
+const emit = defineEmits(['getPersonnels', 'closeDialog'])
 const title = ref('新增')
 const formRef = ref()
 const form = reactive({
@@ -54,8 +52,9 @@ const isEdit = computed(() => {
   return !!props.formId
 })
 const formLoading = ref(false)
-watch(dialogVisible, async (dialogVisibleValue) => {
-  if (dialogVisibleValue && props.formId) {
+
+onMounted(() => {
+  if (props.formId) {
     title.value = '编辑'
     getFormItems()
   } else {
@@ -65,18 +64,16 @@ watch(dialogVisible, async (dialogVisibleValue) => {
 
 // 获取form详情
 const getFormItems = async () => {
-  formLoading.value = true
+  // formLoading.value = true
   await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
-    const { id, name, sex, age, IDNo, avatar, email } = res.data
-    if (props.formId == id) {
-      formLoading.value = false
-      form.name = name
-      form.sex = sex
-      form.age = age
-      form.IDNo = IDNo
-      form.avatar = avatar
-      form.email = email
-    }
+    const { name, sex, age, IDNo, avatar, email } = res.data
+    formLoading.value = false
+    form.name = name
+    form.sex = sex
+    form.age = age
+    form.IDNo = IDNo
+    form.avatar = avatar
+    form.email = email
   })
 }
 
@@ -117,12 +114,12 @@ const submitForm = () => {
 
 //新增保存
 const addSave = () => {
-  formLoading.value = true
+  // formLoading.value = true
   http.post('/api/v1/personnel/add', form).then((res) => {
     formLoading.value = false
     if (res.data.status == '200') {
-      resetForm(formRef.value) //重置表单
-      dialogVisible.value = false
+      // resetForm(formRef.value) //重置表单
+      emit('closeDialog')
       ElMessage({
         message: '新增成功',
         type: 'success'
@@ -139,7 +136,7 @@ const addSave = () => {
 
 // 编辑保存
 const editSave = () => {
-  formLoading.value = true
+  // formLoading.value = true
   const editData = {
     name: form.name,
     age: form.age,
@@ -151,8 +148,8 @@ const editSave = () => {
   http.put(`/api/v1/personnel/${props.formId}`, editData).then((res) => {
     formLoading.value = false
     if (res.data.status == '200') {
-      resetForm(formRef.value) //重置表单
-      dialogVisible.value = false
+      // resetForm(formRef.value) //重置表单
+      emit('closeDialog')
       ElMessage({
         message: '编辑成功',
         type: 'success'
@@ -166,20 +163,21 @@ const editSave = () => {
     }
   })
 }
-const resetForm = () => {
-  if (!formRef.value) return
-  formRef.value.resetFields()
-}
+// const resetForm = () => {
+//   if (!formRef.value) return
+//   formRef.value.resetFields()
+// }
 //点击取消
 const cancel = () => {
-  resetForm() //重置表单
-  dialogVisible.value = false
+  // resetForm() //重置表单
+  emit('closeDialog')
 }
 const handleClose = (done) => {
   ElMessageBox.confirm('确定关闭对话框吗?')
     .then(() => {
       formRef.value.resetFields()
       formLoading.value = false
+      emit('closeDialog')
       done()
     })
     .catch(() => {
