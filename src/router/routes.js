@@ -6,9 +6,14 @@ export const constRoutes=[
     },
     {
       path: "/",
-      component: () => import("@/views/personnel/PersonnelIndex.vue"),
-      name: "personnel",
+      component: () => import("@/components/super-table/super-table.vue"),
+      name: "super-table",
     },
+    // {
+    //   path: "/",
+    //   component: () => import("@/views/personnel/PersonnelIndex.vue"),
+    //   name: "personnel",
+    // },
     {
         path: "/404",
         component: () => import("@/views/404/index.vue"),
