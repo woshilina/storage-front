@@ -9,14 +9,15 @@ import 'element-plus/theme-chalk/display.css'
 // import 'virtual:svg-icons-register'
 import router from '@/router'
 import App from '@/App.vue'
-
+import SuperTable from './components/super-table/super-table.vue'
 
 // createApp(App).mount('#app')
-const app = createApp(App);
+const app = createApp(App)
 
 // app.provide('$axios', axios)
+app.component('SuperTable', SuperTable)
 app.use(ElementPlus, {
-  locale: zhCn,
+  locale: zhCn
 })
 app.use(router)
 app.mount('#app')

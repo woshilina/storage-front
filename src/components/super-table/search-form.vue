@@ -23,16 +23,33 @@
   </el-form>
 </template>
 <script setup>
-// import { ref, reactive } from 'vue'
-
+import { ref, computed } from 'vue'
+const queryRef = ref()
 const search = defineModel('search')
-const searchRules = []
 const { columns } = defineProps(['columns'])
+const searchRules = computed(() => {
+  const rules = {}
+  columns.forEach((col) => {
+    if (col.search && col.searchRules && col.searchRules.length > 0) {
+      rules[col.prop] = col.searchRules
+    }
+  })
+  return rules
+})
 const emit = defineEmits(['searchChange', 'searchReset'])
 function onQuery() {
-  emit('searchChange')
+  if (!queryRef.value) return
+  queryRef.value.validate((valid, fields) => {
+    if (valid) {
+      emit('searchChange')
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
 }
 function onEmpty() {
+  if (!queryRef.value) return
+  queryRef.value.resetFields()
   emit('searchReset')
 }
 </script>

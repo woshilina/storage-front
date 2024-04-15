@@ -1,18 +1,15 @@
 <template>
-  <div class="">
+  <div class="table-content">
     <el-table :data="data" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" v-if="option.selection" width="55" />
       <el-table-column v-if="option.index" type="index" :label="indexText" :index="indexMethod" width="80" />
       <template v-for="column in option.columns" :key="column.prop">
         <el-table-column :prop="column.prop" :label="column.label">
-          <!-- <slot :name="column.prop"></slot> -->
+          <template #default="scope">
+            <slot :name="column.prop" :row="scope.row">{{ scope.row[column.prop] }}</slot>
+          </template>
         </el-table-column>
       </template>
-      <!-- <el-table-column prop="sex" label="性别">
-        <template #default="scope">
-          <div>{{ scope.row.sex == '1' ? '男' : '女' }}</div>
-        </template>
-      </el-table-column> -->
       <el-table-column v-if="option.menu" label="操作" width="180">
         <template #default="scope">
           <Edit style="cursor: pointer; width: 1em; height: 1em; margin-right: 8px; color: #409eff" @click="handleEdit(scope.$index, scope.row)" />
@@ -20,32 +17,22 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- <el-pagination
-      class="home_pagination"
-      background
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :page-sizes="[10, 20, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    /> -->
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 const { option, data, page } = defineProps(['option', 'data', 'page'])
 import { Delete, Edit } from '@element-plus/icons-vue'
+const emit = defineEmits(['onLoad', 'selectionChange', 'rowDel'])
 const indexText = computed(() => {
   return option.indexText ? option.indexText : '序号'
 })
 const indexMethod = (index) => {
   return index + 1 + (page.currentPage - 1) * page.pageSize
 }
-const multipleSelection = ref([])
+// 多选
 const handleSelectionChange = (val) => {
-  multipleSelection.value = val
+  emit('selectionChange', val)
 }
 
 //点击行编辑
@@ -56,10 +43,7 @@ const handleEdit = (index, row) => {
 }
 //点击行删除
 const handleDelete = (index, row) => {
-  console.log(index, row)
-
-  // isOpenDialog.value = true
-  // formId.value = row.id
+  emit('rowDel', index, row)
 }
 </script>
 <style lang="scss"></style>
