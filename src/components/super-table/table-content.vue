@@ -23,7 +23,7 @@
 import { computed } from 'vue'
 const { option, data, page } = defineProps(['option', 'data', 'page'])
 import { Delete, Edit } from '@element-plus/icons-vue'
-const emit = defineEmits(['onLoad', 'selectionChange', 'rowDel'])
+const emit = defineEmits(['onLoad', 'selectionChange', 'handleDel', 'handleEdit'])
 const indexText = computed(() => {
   return option.indexText ? option.indexText : '序号'
 })
@@ -37,13 +37,11 @@ const handleSelectionChange = (val) => {
 
 //点击行编辑
 const handleEdit = (index, row) => {
-  console.log(index, row)
-  // isOpenDialog.value = true
-  // formId.value = row.id
+  emit('handleEdit', index, row)
 }
 //点击行删除
 const handleDelete = (index, row) => {
-  emit('rowDel', index, row)
+  emit('handleDel', index, row)
 }
 </script>
 <style lang="scss"></style>

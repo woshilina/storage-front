@@ -24,7 +24,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessageBox } from 'element-plus'
 const { columns } = defineProps(['columns'])
-const emit = defineEmits(['rowSave', 'rowEdit', 'closeDialog'])
+const emit = defineEmits(['addSave', 'editSave', 'closeDialog'])
 const title = ref('新增')
 const formRef = ref()
 const form = defineModel()
@@ -54,9 +54,10 @@ const submitForm = () => {
   formRef.value.validate((valid, fields) => {
     if (valid) {
       if (!isEdit.value) {
-        emit('rowSave')
+        console.log(form)
+        emit('addSave', form)
       } else {
-        emit('rowEdit')
+        emit('editSave', form)
       }
     } else {
       console.log('error submit!', fields)
