@@ -3,10 +3,13 @@
     <el-table :data="data" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" v-if="option.selection" width="55" />
       <el-table-column v-if="option.index" type="index" :label="indexText" :index="indexMethod" width="80" />
-      <template v-for="column in option.columns" :key="column.prop">
+      <template v-for="column in columns" :key="column.prop">
         <el-table-column :prop="column.prop" :label="column.label">
           <template #default="scope">
-            <slot :name="column.prop" :row="scope.row">{{ scope.row[column.prop] }}</slot>
+            <slot :name="column.prop" :row="scope.row" :prop="column.prop">
+              <template v-if="column.type == 'select'">{{ column.formatter(column, scope.row[column.prop]) }}</template>
+              <template v-else>{{ scope.row[column.prop] }}</template>
+            </slot>
           </template>
         </el-table-column>
       </template>
@@ -21,7 +24,7 @@
 </template>
 <script setup>
 import { computed } from 'vue'
-const { option, data, page } = defineProps(['option', 'data', 'page'])
+const { option, data, page, columns } = defineProps(['option', 'data', 'page', 'columns'])
 import { Delete, Edit } from '@element-plus/icons-vue'
 const emit = defineEmits(['onLoad', 'selectionChange', 'handleDel', 'handleEdit'])
 const indexText = computed(() => {

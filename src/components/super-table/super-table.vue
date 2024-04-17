@@ -1,17 +1,13 @@
 <template>
   <div class="super-table">
     <SearchForm :columns="option.columns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
-      <template v-for="column in option.columns" :key="column.prop">
-        <template v-if="column.search">
-          <slot :name="column.prop + '-search'"> </slot>
-        </template>
+      <template #column="{ prop }">
+        <slot :name="prop + '-search'"></slot>
       </template>
     </SearchForm>
     <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
-    <TableContent :option="option" :data="data" :page="page" @selection-change="selectionChange" @handle-del="handleDel" @handle-edit="handleEdit">
-      <template #sex="scope">
-        <span>{{ scope.row.sex == '1' ? '男' : '女' }}</span>
-      </template>
+    <TableContent :option="option" :columns="columns" :data="data" :page="page" @selection-change="selectionChange" @handle-del="handleDel" @handle-edit="handleEdit">
+      <!-- <template #default="scope"></template> -->
     </TableContent>
     <el-pagination
       class="table_pagination"
@@ -32,14 +28,26 @@ import { Plus } from '@element-plus/icons-vue'
 import SearchForm from './search-form.vue'
 import TableContent from './table-content.vue'
 import TableDialog from './table-dialog.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 const search = defineModel('search')
 const page = defineModel('page')
 const form = defineModel('form')
 const { option, data } = defineProps(['option', 'data'])
+const columns = computed(() => {
+  return option.columns.map((col) => {
+    if (!col.formatter && col.type == 'select') {
+      col.formatter = formatter
+    }
+    return col
+  })
+})
+const formatter = (col, value) => {
+  for (let dic of col.dicData) {
+    if (dic.value == value) return dic.label
+  }
+}
 const emit = defineEmits(['onLoad', 'rowSave', 'rowEdit', 'getFormItems'])
 const isOpenDialog = ref(false)
-
 function searchChange() {
   emit('onLoad')
 }
@@ -64,11 +72,9 @@ const handleAdd = () => {
 const handleEdit = (index, row) => {
   form.value.id = row.id
   emit('getFormItems', row.id)
-  openDialog()
-}
-const openDialog = () => {
   isOpenDialog.value = true
 }
+
 const addSave = (form) => {
   emit('rowSave', form.value, closeDialog)
 }
@@ -94,7 +100,7 @@ const handleCurrentChange = (val) => {
 </script>
 <style lang="scss">
 .super-table {
-  margin: 30px;
+  padding: 30px;
   .inputrange {
     display: inline-flex;
     flex-grow: 1;

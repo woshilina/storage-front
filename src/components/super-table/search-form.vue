@@ -4,7 +4,7 @@
       <template v-for="column in columns" :key="column.prop">
         <el-col v-if="column.search" :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
           <el-form-item :label="column.label" :prop="column.prop">
-            <slot :name="column.prop + '-search'">
+            <slot name="column" v-bind="column">
               <el-input v-if="column.type == 'input'" v-model="search[column.prop]" :placeholder="column.label" clearable />
               <el-select v-else-if="column.type == 'select'" v-model="search[column.prop]" :placeholder="column.label" clearable>
                 <el-option v-for="dic in column.dicData" :key="dic.label" :label="dic.label" :value="dic.value" />
@@ -17,6 +17,7 @@
         <el-form-item>
           <el-button type="primary" @click="onQuery">查询</el-button>
           <el-button @click="onEmpty">清空</el-button>
+          <!-- <slot></slot> -->
         </el-form-item>
       </el-col>
     </el-row>

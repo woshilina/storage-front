@@ -16,8 +16,9 @@
         <el-input v-model.number="search.fromAge" placeholder="起始年龄" clearable />
         <div class="inputrange_line">-</div>
         <el-input v-model.number="search.toAge" placeholder="终止年龄" clearable />
-      </div> </template
-  ></SuperTable>
+      </div>
+    </template>
+  </SuperTable>
 </template>
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
@@ -80,6 +81,9 @@ const option = reactive({
         }
       ],
       search: true,
+    //   formatter: () => {
+    //     return '22'
+    //   },
       dicData: [
         { label: '男', value: '1' },
         { label: '女', value: '2' }
