@@ -10,12 +10,14 @@ import 'element-plus/theme-chalk/display.css'
 import router from '@/router'
 import App from '@/App.vue'
 import SuperTable from './components/super-table/super-table.vue'
+import SuperTableV2 from './components/super-table-v2/super-table-v2.vue'
 
 // createApp(App).mount('#app')
 const app = createApp(App)
 
 // app.provide('$axios', axios)
 app.component('SuperTable', SuperTable)
+app.component('SuperTableV2', SuperTableV2)
 app.use(ElementPlus, {
   locale: zhCn
 })

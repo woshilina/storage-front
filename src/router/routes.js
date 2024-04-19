@@ -15,6 +15,11 @@ export const constRoutes=[
       name: "person",
     },
     {
+      path: "/v2",
+      component: () => import("@/views/person/PersonIndexV2.vue"),
+      name: "personv2",
+    },
+    {
         path: "/404",
         component: () => import("@/views/404/index.vue"),
         name: "404",

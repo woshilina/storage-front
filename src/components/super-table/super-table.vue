@@ -1,11 +1,16 @@
 <template>
   <div class="super-table">
-    <SearchForm :columns="option.columns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
-      <template #column="{ prop }">
-        <slot :name="prop + '-search'"></slot>
-      </template>
-    </SearchForm>
-    <el-button type="primary" :icon="Plus" @click="handleAdd">新增</el-button>
+    <div class="top-filter">
+      <div class="top-btn">
+        <el-button type="primary" v-if="addBtn" :icon="Plus" @click="handleAdd">新增</el-button>
+        <el-button type="danger" v-if="multiDelBtn" @click="handleMultiDel">批量删除</el-button>
+      </div>
+      <SearchForm :columns="option.columns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
+        <template #column="{ prop }">
+          <slot :name="prop + '-search'"></slot>
+        </template>
+      </SearchForm>
+    </div>
     <TableContent :option="option" :columns="columns" :data="data" :page="page" @selection-change="selectionChange" @handle-del="handleDel" @handle-edit="handleEdit">
       <!-- <template #default="scope"></template> -->
     </TableContent>
@@ -32,7 +37,12 @@ import { ref, computed } from 'vue'
 const search = defineModel('search')
 const page = defineModel('page')
 const form = defineModel('form')
-const { option, data } = defineProps(['option', 'data'])
+const { option, data, addBtn, multiDelBtn } = defineProps({
+  option: { type: Object },
+  data: { type: Array },
+  addBtn: { default: true },
+  multiDelBtn: { default: true }
+})
 const columns = computed(() => {
   return option.columns.map((col) => {
     if (!col.formatter && col.type == 'select') {
@@ -65,22 +75,21 @@ const multipleSelection = ref([])
 function selectionChange(val) {
   multipleSelection.value = val
 }
+const handleMultiDel = () => {}
 //点击新增
 const handleAdd = () => {
-  isOpenDialog.value = true
+  emit('handleAdd')
 }
 const handleEdit = (index, row) => {
-  form.value.id = row.id
-  emit('getFormItems', row.id)
-  isOpenDialog.value = true
+  emit('handleEdit', index, row)
 }
 
-const addSave = (form) => {
-  emit('rowSave', form.value, closeDialog)
-}
-const editSave = (form) => {
-  emit('rowEdit', form.value, closeDialog)
-}
+// const addSave = (form) => {
+//   emit('rowSave', form.value, closeDialog)
+// }
+// const editSave = (form) => {
+//   emit('rowEdit', form.value, closeDialog)
+// }
 //点击行删除
 const handleDel = (index, row) => {
   emit('rowDel', index, row)
@@ -101,12 +110,19 @@ const handleCurrentChange = (val) => {
 <style lang="scss">
 .super-table {
   padding: 30px;
-  .inputrange {
-    display: inline-flex;
-    flex-grow: 1;
+  .top-filter {
+    display: flex;
+    justify-content: space-between;
+    .top-btn{
+      flex-basis: 200px;
+    }
+    .inputrange {
+      display: inline-flex;
+      flex-grow: 1;
 
-    .inputrange_line {
-      margin: 0 8px;
+      .inputrange_line {
+        margin: 0 8px;
+      }
     }
   }
   .table_pagination {

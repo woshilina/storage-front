@@ -24,8 +24,8 @@
 </template>
 <script setup>
 import { computed } from 'vue'
-const { option, data, page, columns } = defineProps(['option', 'data', 'page', 'columns'])
 import { Delete, Edit } from '@element-plus/icons-vue'
+const { option, data, page, columns } = defineProps(['option', 'data', 'page', 'columns'])
 const emit = defineEmits(['onLoad', 'selectionChange', 'handleDel', 'handleEdit'])
 const indexText = computed(() => {
   return option.indexText ? option.indexText : '序号'

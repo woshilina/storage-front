@@ -1,16 +1,5 @@
 <template>
-  <SuperTable
-    :option="option"
-    :data="data"
-    v-model:search="search"
-    v-model:form="form"
-    v-model:page="page"
-    @on-load="onLoad"
-    @row-save="rowSave"
-    @get-form-items="getFormItems"
-    @row-edit="rowEdit"
-    @row-del="rowDel"
-  >
+  <SuperTable :option="option" :data="data" v-model:search="search" v-model:form="form" v-model:page="page" @on-load="onLoad" @row-del="rowDel">
     <template #age-search>
       <div class="inputrange">
         <el-input v-model.number="search.fromAge" placeholder="起始年龄" clearable />
@@ -19,12 +8,15 @@
       </div>
     </template>
   </SuperTable>
+  <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"> </PersonDialog>
 </template>
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
-
+import PersonDialog from './PersonDialog.vue'
+const formId = ref('')
+const isOpenDialog = ref(false)
 const search = reactive({})
 const checkAge = (rule, value, callback) => {
   if (!String(search.fromAge) || !search.toAge) {
@@ -81,9 +73,6 @@ const option = reactive({
         }
       ],
       search: true,
-    //   formatter: () => {
-    //     return '22'
-    //   },
       dicData: [
         { label: '男', value: '1' },
         { label: '女', value: '2' }
@@ -139,64 +128,18 @@ function onLoad() {
 onMounted(() => {
   onLoad()
 })
-//新增保存
-const rowSave = (form, done) => {
-  // formLoading.value = true
-  http.post('/api/v1/personnel/add', form).then((res) => {
-    // formLoading.value = false
-    if (res.data.status == '200') {
-      done()
-      ElMessage({
-        message: '新增成功',
-        type: 'success'
-      })
-      onLoad()
-    } else {
-      ElMessage({
-        message: '新增失败',
-        type: 'error'
-      })
-    }
-  })
+const onHandleAdd = () => {
+  formId.value = ''
+  isOpenDialog.value = true
 }
-const getFormItems = async (id) => {
-  await http.get(`/api/v1/personnel/${id}`).then((res) => {
-    const { name, sex, age, IDNo, avatar, email } = res.data
-    // formLoading.value = false
-    form.name = name
-    form.sex = sex
-    form.age = age
-    form.IDNo = IDNo
-    form.avatar = avatar
-    form.email = email
-  })
+//点击行编辑
+const onHandleEdit = (index, row) => {
+  isOpenDialog.value = true
+  formId.value = row.id
 }
-// 编辑保存
-const rowEdit = (form, done) => {
-  // formLoading.value = true
-  const editData = {
-    name: form.name,
-    age: form.age,
-    sex: form.sex,
-    IDNo: form.IDNo,
-    avatar: form.avatar,
-    email: form.email
-  }
-  http.put(`/api/v1/personnel/${form.id}`, editData).then((res) => {
-    if (res.data.status == '200') {
-      done()
-      ElMessage({
-        message: '编辑成功',
-        type: 'success'
-      })
-      onLoad()
-    } else {
-      ElMessage({
-        message: '编辑失败',
-        type: 'error'
-      })
-    }
-  })
+
+const closeDialog = () => {
+  isOpenDialog.value = false
 }
 //点击行删除
 const rowDel = (index, row) => {
