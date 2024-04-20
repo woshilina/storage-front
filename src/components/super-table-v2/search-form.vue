@@ -1,5 +1,5 @@
 <template>
-  <el-form class="search-form" ref="queryRef" :model="search" :rules="searchRules">
+  <el-form class="search-form-v2" ref="queryRef" :model="search" :rules="searchRules">
     <template v-for="column in searchColumns" :key="column.prop">
       <template v-if="column.search">
         <el-form-item :label="column.label" :prop="column.prop">
@@ -50,7 +50,7 @@ function onEmpty() {
 }
 </script>
 <style lang="scss">
-.search-form {
+.search-form-v2 {
   display: flex;
   flex-wrap: wrap;
   margin-left: 20px;
@@ -60,10 +60,10 @@ function onEmpty() {
     padding-left: 20px;
   }
   .filter-btn {
-    width: 190px;
+    // width: 190px;
     flex-shrink: 0;
     margin-left: 20px;
-    display: flex;
+    // display: flex;
   }
 }
 </style>

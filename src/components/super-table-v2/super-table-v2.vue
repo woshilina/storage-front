@@ -1,10 +1,11 @@
 <template>
-  <div class="super-table">
+  <div class="super-table-v2">
     <div>
       <div class="top-filter">
         <div class="top-btn">
           <el-button type="primary" v-if="addBtn" :icon="Plus" @click="handleAdd">新增</el-button>
           <el-button type="danger" v-if="multiDelBtn" @click="handleMultiDel">批量删除</el-button>
+          <slot name="left-btn"></slot>
         </div>
         <SearchForm :searchColumns="searchColumns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
           <template #column="{ prop }">
@@ -43,11 +44,13 @@ const { searchColumns, columns, data, addBtn, multiDelBtn } = defineProps({
   multiDelBtn: { default: true }
 })
 
-const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd'])
+const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd','handleMultiDel'])
 function searchChange() {
   emit('onLoad')
 }
-const handleMultiDel = () => {}
+const handleMultiDel = () => {
+  emit('handleMultiDel')
+}
 function resetChange() {
   // 清空自定义搜索字段
   Object.keys(search.value).forEach((key) => {
@@ -87,7 +90,7 @@ const handleCurrentChange = (val) => {
 }
 </script>
 <style lang="scss">
-.super-table {
+.super-table-v2 {
   height: 100%;
   padding: 30px;
   display: flex;

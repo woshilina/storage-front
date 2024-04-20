@@ -9,7 +9,9 @@
     @on-load="onLoad"
     @handle-add="onHandleAdd"
     @row-del="rowDel"
+    @handle-multi-del="handleMultiDel"
   >
+    <template #left-btn><el-button type="primary">slotBtn</el-button></template>
     <template #age-search>
       <div class="inputrange">
         <el-input v-model.number="search.fromAge" placeholder="起始年龄" clearable />
@@ -94,6 +96,7 @@ const searchColumns = [
     searchRules: [{ validator: checkAge, trigger: 'blur' }]
   }
 ]
+const deleteIds = ref([])
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
@@ -102,16 +105,34 @@ const columnsv2 = [
     key: 'selection',
     width: 50,
     cellRenderer: ({ rowData }) => {
-      const onChange = (value) => (rowData.checked = value)
+      const onChange = (value) => {
+        rowData.checked = value
+        const _deleteIds = unref(deleteIds)
+        if (value) {
+          deleteIds.value.push(rowData.id)
+        } else {
+          deleteIds.value = _deleteIds.filter((sel) => sel !== rowData.id)
+        }
+      }
       return <SelectionCell value={rowData.checked} onChange={onChange} />
     },
     headerCellRenderer: () => {
       const _data = unref(data)
-      const onChange = (value) =>
-        (data.value = _data.map((row) => {
+      const onChange = (value) => {
+        data.value = _data.map((row) => {
           row.checked = value
           return row
-        }))
+        })
+        if (value) {
+          _deleteIds = []
+          _data.forEach((item) => {
+            _deleteIds.push(item.id)
+          })
+          deleteIds.value = _deleteIds
+        } else {
+          deleteIds.value = []
+        }
+      }
       const allSelected = _data.every((row) => row.checked)
       const containsChecked = _data.some((row) => row.checked)
       return <SelectionCell value={allSelected} intermediate={containsChecked && !allSelected} onChange={onChange} />
@@ -122,20 +143,22 @@ const columnsv2 = [
     title: '姓名',
     dataKey: 'name',
     width: 150,
+    flexGrow: 1,
     align: 'center'
   },
   {
     key: 'age',
     title: '年龄',
     dataKey: 'age',
-    width: 150,
+    width: 100,
+    flexGrow: 1,
     align: 'center'
   },
   {
     key: 'sex',
     title: '性别',
     dataKey: 'sex',
-    width: 150,
+    width: 100,
     align: 'center',
     dicData: [
       { label: '男', value: '1' },
@@ -159,6 +182,7 @@ const columnsv2 = [
     title: '邮箱',
     dataKey: 'email',
     width: 150,
+    flexGrow: 1,
     align: 'center'
   },
   {
@@ -166,6 +190,7 @@ const columnsv2 = [
     title: '头像',
     dataKey: 'avatar',
     width: 150,
+    flexGrow: 1,
     align: 'center'
   },
   {
@@ -182,6 +207,7 @@ const columnsv2 = [
       </div>
     ),
     width: 150,
+    flexGrow: 1,
     align: 'center'
   }
 ]
@@ -222,7 +248,7 @@ const closeDialog = () => {
 const rowDel = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')
     .then(() => {
-      http.delete(`/api/v1/personnel/${row.id}`).then((res) => {
+      http.delete(`/api/v1/personnel/multi`, { data: { ids: [row.id] } }).then((res) => {
         if (res.data.status == '200') {
           ElMessage({
             message: '删除成功',
@@ -240,6 +266,32 @@ const rowDel = (index, row) => {
     .catch(() => {
       // catch error
     })
+}
+const handleMultiDel = () => {
+  if (deleteIds.value.length == 0) {
+    ElMessage.error('请选择要删除的数据')
+  } else {
+    ElMessageBox.confirm('确定删除所选数据吗?')
+      .then(() => {
+        http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
+          if (res.data.status == '200') {
+            ElMessage({
+              message: '删除成功',
+              type: 'success'
+            })
+            onLoad()
+          } else {
+            ElMessage({
+              message: '删除失败',
+              type: 'error'
+            })
+          }
+        })
+      })
+      .catch(() => {
+        // catch error
+      })
+  }
 }
 </script>
 <style lang="scss"></style>

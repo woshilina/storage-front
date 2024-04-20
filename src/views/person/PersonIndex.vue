@@ -145,7 +145,7 @@ const closeDialog = () => {
 const rowDel = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')
     .then(() => {
-      http.delete(`/api/v1/personnel/${row.id}`).then((res) => {
+      http.delete(`/api/v1/personnel/multi`, { data: { ids: [row.id] } }).then((res) => {
         if (res.data.status == '200') {
           ElMessage({
             message: '删除成功',

@@ -113,9 +113,6 @@ const handleCurrentChange = (val) => {
   .top-filter {
     display: flex;
     justify-content: space-between;
-    .top-btn{
-      flex-basis: 200px;
-    }
     .inputrange {
       display: inline-flex;
       flex-grow: 1;
