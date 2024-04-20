@@ -1,7 +1,7 @@
 <template>
   <SuperTableV2
     :columns="columnsv2"
-    :searchColumns="searchColumns"
+    :filterColumns="filterColumns"
     :data="data"
     :addBtn="addBtn"
     :multiDelBtn="multiDelBtn"
@@ -52,7 +52,7 @@ const page = reactive({
   pageSize: 10
 })
 const data = ref([])
-const searchColumns = [
+const filterColumns = [
   {
     label: '姓名',
     prop: 'name',

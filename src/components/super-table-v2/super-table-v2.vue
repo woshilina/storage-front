@@ -7,7 +7,7 @@
           <el-button type="danger" v-if="multiDelBtn" @click="handleMultiDel">批量删除</el-button>
           <slot name="left-btn"></slot>
         </div>
-        <SearchForm :searchColumns="searchColumns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
+        <SearchForm :filterColumns="filterColumns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
           <template #column="{ prop }">
             <slot :name="prop + '-search'"></slot>
           </template>
@@ -36,8 +36,8 @@ import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
 const search = defineModel('search')
 const page = defineModel('page')
-const { searchColumns, columns, data, addBtn, multiDelBtn } = defineProps({
-  searchColumns: { type: Array },
+const { filterColumns, columns, data, addBtn, multiDelBtn } = defineProps({
+  filterColumns: { type: Array },
   columns: { type: Array },
   data: { type: Array },
   addBtn: { default: true },

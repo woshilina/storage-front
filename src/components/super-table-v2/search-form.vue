@@ -1,6 +1,6 @@
 <template>
   <el-form class="search-form-v2" ref="queryRef" :model="search" :rules="searchRules">
-    <template v-for="column in searchColumns" :key="column.prop">
+    <template v-for="column in filterColumns" :key="column.prop">
       <template v-if="column.search">
         <el-form-item :label="column.label" :prop="column.prop">
           <slot name="column" v-bind="column">
@@ -22,10 +22,10 @@
 import { ref, computed } from 'vue'
 const queryRef = ref()
 const search = defineModel('search')
-const { searchColumns } = defineProps(['searchColumns'])
+const { filterColumns } = defineProps(['filterColumns'])
 const searchRules = computed(() => {
   const rules = {}
-  searchColumns.forEach((col) => {
+  filterColumns.forEach((col) => {
     if (col.search && col.searchRules && col.searchRules.length > 0) {
       rules[col.prop] = col.searchRules
     }
