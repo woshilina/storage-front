@@ -225,6 +225,9 @@ function onLoad() {
     .then((res) => {
       data.value = res.data.data
       page.total = res.data.total
+      // if (res.data.totalPage > 1) {
+      //   page.currentPage = 1
+      // }
     })
     .catch(() => {})
 }

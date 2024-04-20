@@ -46,6 +46,7 @@ const { filters, columns, data, addBtn, multiDelBtn, deleteIds, search, page } =
 })
 const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel'])
 function handleSearch() {
+  page.currentPage = 1
   emit('onLoad')
 }
 const handleMultiDel = () => {
