@@ -34,7 +34,7 @@ import { Plus } from '@element-plus/icons-vue'
 import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
 import SearchFormV2 from './search-form-v2.vue'
-const { filters, columns, data, addBtn, multiDelBtn, search, page } = defineProps({
+const { filters, columns, data, addBtn, multiDelBtn, deleteIds, search, page } = defineProps({
   filters: { type: Array },
   columns: { type: Array },
   data: { type: Array },
@@ -45,8 +45,8 @@ const { filters, columns, data, addBtn, multiDelBtn, search, page } = defineProp
   page: { type: Object }
 })
 const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel'])
-function handleSearch(search) {
-  emit('onLoad', search)
+function handleSearch() {
+  emit('onLoad')
 }
 const handleMultiDel = () => {
   emit('handleMultiDel')

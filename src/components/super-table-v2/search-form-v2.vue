@@ -36,7 +36,7 @@ function onQuery() {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {
     if (valid) {
-      emit('searchChange', search)
+      emit('searchChange')
     } else {
       console.log('error submit!', fields)
     }
