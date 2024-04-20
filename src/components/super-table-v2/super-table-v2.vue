@@ -4,22 +4,22 @@
       <div class="top-filter">
         <div class="top-btn">
           <el-button type="primary" v-if="addBtn" :icon="Plus" @click="handleAdd">新增</el-button>
-          <el-button type="danger" v-if="multiDelBtn" @click="handleMultiDel">批量删除</el-button>
+          <el-button type="danger" v-if="multiDelBtn" :disabled="deleteIds.length == 0" @click="handleMultiDel">批量删除</el-button>
           <slot name="left-btn"></slot>
         </div>
-        <SearchForm :filterColumns="filterColumns" v-model:search="search" @search-change="searchChange" @search-reset="resetChange">
+        <SearchFormV2 :filters="filters" :search="search" @search-change="handleSearch" @search-reset="resetChange">
           <template #column="{ prop }">
             <slot :name="prop + '-search'"></slot>
           </template>
-        </SearchForm>
+        </SearchFormV2>
       </div>
       <TableContentV2 :columns="columns" :data="data" @handle-del="handleDel" @handle-edit="handleEdit"> </TableContentV2>
     </div>
     <el-pagination
       class="table_pagination"
       background
-      v-model:current-page="page.currentPage"
-      v-model:page-size="page.pageSize"
+      :current-page="page.currentPage"
+      :page-size="page.pageSize"
       :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper"
       :total="page.total"
@@ -31,34 +31,33 @@
 </template>
 <script setup>
 import { Plus } from '@element-plus/icons-vue'
-import SearchForm from './search-form.vue'
 import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
-const search = defineModel('search')
-const page = defineModel('page')
-const { filterColumns, columns, data, addBtn, multiDelBtn } = defineProps({
-  filterColumns: { type: Array },
+import SearchFormV2 from './search-form-v2.vue'
+const { filters, columns, data, addBtn, multiDelBtn, search, page } = defineProps({
+  filters: { type: Array },
   columns: { type: Array },
   data: { type: Array },
   addBtn: { default: true },
-  multiDelBtn: { default: true }
+  multiDelBtn: { default: true },
+  deleteIds: { type: Array },
+  search: { type: Object },
+  page: { type: Object }
 })
-
-const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd','handleMultiDel'])
-function searchChange() {
-  emit('onLoad')
+const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel'])
+function handleSearch(search) {
+  emit('onLoad', search)
 }
 const handleMultiDel = () => {
   emit('handleMultiDel')
 }
 function resetChange() {
   // 清空自定义搜索字段
-  Object.keys(search.value).forEach((key) => {
-    if (search.value[key] || search.value[key] == 0) {
-      search.value[key] = undefined
+  Object.keys(search).forEach((key) => {
+    if (search[key] || search[key] == 0) {
+      search[key] = undefined
     }
   })
-  console.log(search)
   emit('onLoad')
 }
 //点击新增
@@ -69,23 +68,17 @@ const handleEdit = (index, row) => {
   emit('handleEdit', index, row)
 }
 
-// const addSave = (form) => {
-//   emit('rowSave', form.value, closeDialog)
-// }
-// const editSave = (form) => {
-//   emit('rowEdit', form.value, closeDialog)
-// }
 //点击行删除
 const handleDel = (index, row) => {
   emit('rowDel', index, row)
 }
 
 const handleSizeChange = (val) => {
-  page.value.pageSize = val
+  page.pageSize = val
   emit('onLoad')
 }
 const handleCurrentChange = (val) => {
-  page.value.currentPage = val
+  page.currentPage = val
   emit('onLoad')
 }
 </script>

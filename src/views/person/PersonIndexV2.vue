@@ -1,12 +1,13 @@
 <template>
   <SuperTableV2
     :columns="columnsv2"
-    :filterColumns="filterColumns"
+    :filters="filters"
     :data="data"
     :addBtn="addBtn"
     :multiDelBtn="multiDelBtn"
-    v-model:search="search"
-    v-model:page="page"
+    :search="search"
+    :deleteIds="deleteIds"
+    :page="page"
     @on-load="onLoad"
     @handle-add="onHandleAdd"
     @row-del="rowDel"
@@ -52,24 +53,25 @@ const page = reactive({
   pageSize: 10
 })
 const data = ref([])
-const filterColumns = [
+const filters = [
   {
     label: '姓名',
     prop: 'name',
     type: 'input',
+    width: 200,
     rules: [
       {
         required: true,
         message: '请输入姓名',
         trigger: 'blur'
       }
-    ],
-    search: true
+    ]
   },
   {
     label: '性别',
     prop: 'sex',
     type: 'select',
+    width: 140,
     rules: [
       {
         required: true,
@@ -77,7 +79,6 @@ const filterColumns = [
         trigger: 'blur'
       }
     ],
-    search: true,
     dicData: [
       { label: '男', value: '1' },
       { label: '女', value: '2' }
@@ -87,6 +88,7 @@ const filterColumns = [
     label: '年龄',
     prop: 'age',
     type: 'input',
+    width: 250,
     rules: [
       {
         required: true,
@@ -94,7 +96,6 @@ const filterColumns = [
         trigger: 'blur'
       }
     ],
-    search: true,
     searchRules: [{ validator: checkAge, trigger: 'blur' }]
   }
 ]
@@ -109,11 +110,10 @@ const columnsv2 = [
     cellRenderer: ({ rowData }) => {
       const onChange = (value) => {
         rowData.checked = value
-        const _deleteIds = unref(deleteIds)
         if (value) {
           deleteIds.value.push(rowData.id)
         } else {
-          deleteIds.value = _deleteIds.filter((sel) => sel !== rowData.id)
+          deleteIds.value = deleteIds.value.filter((sel) => sel !== rowData.id)
         }
       }
       return <SelectionCell value={rowData.checked} onChange={onChange} />
@@ -126,11 +126,10 @@ const columnsv2 = [
           return row
         })
         if (value) {
-          _deleteIds = []
+          deleteIds.value = []
           _data.forEach((item) => {
-            _deleteIds.push(item.id)
+            deleteIds.value.push(item.id)
           })
-          deleteIds.value = _deleteIds
         } else {
           deleteIds.value = []
         }

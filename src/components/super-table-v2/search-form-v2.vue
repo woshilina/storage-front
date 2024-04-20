@@ -1,7 +1,7 @@
 <template>
   <el-form class="search-form-v2" ref="queryRef" :model="search" :rules="searchRules">
-    <template v-for="column in filterColumns" :key="column.prop">
-      <template v-if="column.search">
+    <template v-for="column in filters" :key="column.prop">
+      <div :style="{ width: column.width + 'px' }">
         <el-form-item :label="column.label" :prop="column.prop">
           <slot name="column" v-bind="column">
             <el-input v-if="column.type == 'input'" v-model="search[column.prop]" :placeholder="column.label" clearable />
@@ -10,7 +10,7 @@
             </el-select>
           </slot>
         </el-form-item>
-      </template>
+      </div>
     </template>
     <div class="filter-btn">
       <el-button type="primary" @click="onQuery">查询</el-button>
@@ -21,11 +21,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 const queryRef = ref()
-const search = defineModel('search')
-const { filterColumns } = defineProps(['filterColumns'])
+const { filters, search } = defineProps(['filters', 'search'])
 const searchRules = computed(() => {
   const rules = {}
-  filterColumns.forEach((col) => {
+  filters.forEach((col) => {
     if (col.search && col.searchRules && col.searchRules.length > 0) {
       rules[col.prop] = col.searchRules
     }
@@ -37,7 +36,7 @@ function onQuery() {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {
     if (valid) {
-      emit('searchChange')
+      emit('searchChange', search)
     } else {
       console.log('error submit!', fields)
     }
