@@ -3,8 +3,9 @@
     :columns="columnsv2"
     :searchColumns="searchColumns"
     :data="data"
+    :addBtn="addBtn"
+    :multiDelBtn="multiDelBtn"
     v-model:search="search"
-    v-model:form="form"
     v-model:page="page"
     @on-load="onLoad"
     @handle-add="onHandleAdd"
@@ -29,6 +30,8 @@ import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
+const addBtn = ref(true)
+const multiDelBtn = ref(true)
 const search = reactive({})
 const checkAge = (rule, value, callback) => {
   if (!search.fromAge && !search.toAge) {
@@ -48,7 +51,6 @@ const page = reactive({
   currentPage: 1,
   pageSize: 10
 })
-const form = reactive({})
 const data = ref([])
 const searchColumns = [
   {
