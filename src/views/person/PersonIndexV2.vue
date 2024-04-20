@@ -1,19 +1,19 @@
 <template>
   <SuperTableV2
-    :columns="columnsv2"
+    :columns="columns"
     :filters="filters"
     :data="data"
-    :addBtn="addBtn"
-    :multiDelBtn="multiDelBtn"
+    :btns="btns"
     :search="search"
     :deleteIds="deleteIds"
     :page="page"
+    @handle-filter="handleFilter"
+    @search-change="searchChange"
     @on-load="onLoad"
-    @handle-add="onHandleAdd"
     @row-del="rowDel"
-    @handle-multi-del="handleMultiDel"
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
   >
-    <template #left-btn><el-button type="primary">slotBtn</el-button></template>
     <template #age-search>
       <div class="inputrange">
         <el-input v-model.number="search.fromAge" placeholder="起始年龄" clearable />
@@ -25,14 +25,13 @@
   <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"> </PersonDialog>
 </template>
 <script lang="jsx" setup>
-import { ref, reactive, onMounted, unref, withModifiers } from 'vue'
+import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
 import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
-const addBtn = ref(true)
-const multiDelBtn = ref(true)
 const search = reactive({})
 const checkAge = (rule, value, callback) => {
   if (!search.fromAge && !search.toAge) {
@@ -53,6 +52,55 @@ const page = reactive({
   pageSize: 10
 })
 const data = ref([])
+const deleteIds = ref([])
+const onHandleAdd = () => {
+  formId.value = ''
+  isOpenDialog.value = true
+}
+const handleMultiDel = () => {
+  if (deleteIds.value.length == 0) {
+    ElMessage.error('请选择要删除的数据')
+  } else {
+    ElMessageBox.confirm('确定删除所选数据吗?')
+      .then(() => {
+        http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
+          if (res.data.status == '200') {
+            ElMessage({
+              message: '删除成功',
+              type: 'success'
+            })
+            onLoad()
+          } else {
+            ElMessage({
+              message: '删除失败',
+              type: 'error'
+            })
+          }
+        })
+      })
+      .catch(() => {
+        // catch error
+      })
+  }
+}
+const multiDelBtnDisable = () => {
+ return deleteIds.value.length == 0 ? true : false
+}
+const btns = [
+  {
+    type: 'primary',
+    disabled: false,
+    icon: Plus,
+    text: '新增',
+    click: onHandleAdd
+  },
+  {
+    type: 'danger',
+    disabled: multiDelBtnDisable,
+    text: '批量删除',
+    click: handleMultiDel
+  }
+]
 const filters = [
   {
     label: '姓名',
@@ -99,11 +147,10 @@ const filters = [
     searchRules: [{ validator: checkAge, trigger: 'blur' }]
   }
 ]
-const deleteIds = ref([])
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
-const columnsv2 = [
+const columns = [
   {
     key: 'selection',
     width: 50,
@@ -212,6 +259,9 @@ const columnsv2 = [
     align: 'center'
   }
 ]
+const searchChange = (value, columnProp) => {
+  search[columnProp] = value
+}
 function onLoad() {
   const queryParams = {}
   Object.keys(search).forEach((key) => {
@@ -231,13 +281,22 @@ function onLoad() {
     })
     .catch(() => {})
 }
+const handleFilter = () => {
+  page.currentPage = 1
+  onLoad()
+}
 onMounted(() => {
   onLoad()
 })
-const onHandleAdd = () => {
-  formId.value = ''
-  isOpenDialog.value = true
+const handleSizeChange = (val) => {
+  page.pageSize = val
+  onLoad()
 }
+const handleCurrentChange = (val) => {
+  page.currentPage = val
+  onLoad()
+}
+
 //点击行编辑
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
@@ -270,32 +329,6 @@ const rowDel = (index, row) => {
     .catch(() => {
       // catch error
     })
-}
-const handleMultiDel = () => {
-  if (deleteIds.value.length == 0) {
-    ElMessage.error('请选择要删除的数据')
-  } else {
-    ElMessageBox.confirm('确定删除所选数据吗?')
-      .then(() => {
-        http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
-          if (res.data.status == '200') {
-            ElMessage({
-              message: '删除成功',
-              type: 'success'
-            })
-            onLoad()
-          } else {
-            ElMessage({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
-        })
-      })
-      .catch(() => {
-        // catch error
-      })
-  }
 }
 </script>
 <style lang="scss"></style>

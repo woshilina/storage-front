@@ -4,9 +4,9 @@
       <div :style="{ width: column.width + 'px' }">
         <el-form-item :label="column.label" :prop="column.prop">
           <slot name="column" v-bind="column">
-            <el-input v-if="column.type == 'input'" v-model="search[column.prop]" :placeholder="column.label" clearable />
-            <el-select v-else-if="column.type == 'select'" v-model="search[column.prop]" :placeholder="column.label" clearable>
-              <el-option v-for="dic in column.dicData" :key="dic.label" :label="dic.label" :value="dic.value" />
+            <el-input v-if="column.type == 'input'" :model-value="search[column.prop]" @input.native="(value) => searchChange(value, column.prop)" :placeholder="column.label" clearable />
+            <el-select v-else-if="column.type == 'select'" :model-value="search[column.prop]" @change="(value) => searchChange(value, column.prop)" :placeholder="column.label" clearable>
+              <el-option v-for="dic in column.dicData" :key="dic.value" :label="dic.label" :value="dic.value" />
             </el-select>
           </slot>
         </el-form-item>
@@ -31,12 +31,16 @@ const searchRules = computed(() => {
   })
   return rules
 })
-const emit = defineEmits(['searchChange', 'searchReset'])
+const emit = defineEmits(['handleFilter', 'searchReset', 'searchChange'])
+const searchChange = (value, columnProp) => {
+  emit('searchChange', value, columnProp)
+}
+
 function onQuery() {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {
     if (valid) {
-      emit('searchChange')
+      emit('handleFilter')
     } else {
       console.log('error submit!', fields)
     }

@@ -3,11 +3,15 @@
     <div>
       <div class="top-filter">
         <div class="top-btn">
-          <el-button type="primary" v-if="addBtn" :icon="Plus" @click="handleAdd">新增</el-button>
-          <el-button type="danger" v-if="multiDelBtn" :disabled="deleteIds.length == 0" @click="handleMultiDel">批量删除</el-button>
-          <slot name="left-btn"></slot>
+          <template v-if="btns && btns.length > 0">
+            <template v-for="btn in btns">
+              <el-button :type="btn.type" :icon="btn.icon" :disabled="btn.disabled" @click="btn.click">{{ btn.text }}</el-button>
+            </template>
+            <!-- <el-button type="danger" v-if="multiDelBtn" :disabled="deleteIds.length == 0" @click="handleMultiDel">批量删除</el-button>
+            <slot name="left-btn"></slot> -->
+          </template>
         </div>
-        <SearchFormV2 :filters="filters" :search="search" @search-change="handleSearch" @search-reset="resetChange">
+        <SearchFormV2 :filters="filters" :search="search" @handle-filter="handleFilter" @search-reset="resetChange" @search-change="searchChange">
           <template #column="{ prop }">
             <slot :name="prop + '-search'"></slot>
           </template>
@@ -23,34 +27,34 @@
       :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper"
       :total="page.total"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
+      @size-change="sizeChange"
+      @current-change="currentChange"
     />
     <!-- <TableDialog v-if="isOpenDialog" v-model="form" :columns="option.columns" @add-save="addSave" @edit-save="editSave" @close-dialog="closeDialog"></TableDialog> -->
   </div>
 </template>
 <script setup>
-import { Plus } from '@element-plus/icons-vue'
 import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
 import SearchFormV2 from './search-form-v2.vue'
-const { filters, columns, data, addBtn, multiDelBtn, deleteIds, search, page } = defineProps({
+const { filters, columns, data, addBtn, multiDelBtn, deleteIds, search, page, btns } = defineProps({
   filters: { type: Array },
   columns: { type: Array },
   data: { type: Array },
-  addBtn: { default: true },
-  multiDelBtn: { default: true },
   deleteIds: { type: Array },
   search: { type: Object },
-  page: { type: Object }
+  page: { type: Object },
+  btns: { type: Array }
 })
-const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel'])
-function handleSearch() {
-  page.currentPage = 1
-  emit('onLoad')
+const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
+function handleFilter() {
+  emit('handleFilter')
 }
 const handleMultiDel = () => {
   emit('handleMultiDel')
+}
+const searchChange = (value, columnProp) => {
+  emit('searchChange', value, columnProp)
 }
 function resetChange() {
   // 清空自定义搜索字段
@@ -73,14 +77,11 @@ const handleEdit = (index, row) => {
 const handleDel = (index, row) => {
   emit('rowDel', index, row)
 }
-
-const handleSizeChange = (val) => {
-  page.pageSize = val
-  emit('onLoad')
+const sizeChange = (val) => {
+  emit('sizeChange', val)
 }
-const handleCurrentChange = (val) => {
-  page.currentPage = val
-  emit('onLoad')
+const currentChange = (val) => {
+  emit('currentChange', val)
 }
 </script>
 <style lang="scss">
