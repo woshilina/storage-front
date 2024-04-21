@@ -3,7 +3,7 @@
     :columns="columns"
     :filters="filters"
     :data="data"
-    :btns="btns"
+    :operations="operations"
     :search="search"
     :deleteIds="deleteIds"
     :page="page"
@@ -83,24 +83,28 @@ const handleMultiDel = () => {
       })
   }
 }
-const multiDelBtnDisable = () => {
- return deleteIds.value.length == 0 ? true : false
-}
-const btns = [
-  {
-    type: 'primary',
-    disabled: false,
-    icon: Plus,
-    text: '新增',
-    click: onHandleAdd
-  },
-  {
-    type: 'danger',
-    disabled: multiDelBtnDisable,
-    text: '批量删除',
-    click: handleMultiDel
-  }
-]
+
+const multiDelBtnDisable = computed(() => {
+  return deleteIds.value.length == 0 ? true : false
+})
+
+const operations = computed(() => {
+  return [
+    {
+      type: 'primary',
+      disabled: false,
+      icon: Plus,
+      text: '新增',
+      click: onHandleAdd
+    },
+    {
+      type: 'danger',
+      disabled: multiDelBtnDisable.value,
+      text: '批量删除',
+      click: handleMultiDel
+    }
+  ]
+})
 const filters = [
   {
     label: '姓名',

@@ -3,12 +3,10 @@
     <div>
       <div class="top-filter">
         <div class="top-btn">
-          <template v-if="btns && btns.length > 0">
-            <template v-for="btn in btns">
+          <template v-if="operations && operations.length > 0">
+            <template v-for="btn in operations">
               <el-button :type="btn.type" :icon="btn.icon" :disabled="btn.disabled" @click="btn.click">{{ btn.text }}</el-button>
             </template>
-            <!-- <el-button type="danger" v-if="multiDelBtn" :disabled="deleteIds.length == 0" @click="handleMultiDel">批量删除</el-button>
-            <slot name="left-btn"></slot> -->
           </template>
         </div>
         <SearchFormV2 :filters="filters" :search="search" @handle-filter="handleFilter" @search-reset="resetChange" @search-change="searchChange">
@@ -37,15 +35,16 @@
 import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
 import SearchFormV2 from './search-form-v2.vue'
-const { filters, columns, data, addBtn, multiDelBtn, deleteIds, search, page, btns } = defineProps({
+const props = defineProps({
   filters: { type: Array },
   columns: { type: Array },
   data: { type: Array },
   deleteIds: { type: Array },
   search: { type: Object },
   page: { type: Object },
-  btns: { type: Array }
+  operations: {}
 })
+
 const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
 function handleFilter() {
   emit('handleFilter')
@@ -58,9 +57,9 @@ const searchChange = (value, columnProp) => {
 }
 function resetChange() {
   // 清空自定义搜索字段
-  Object.keys(search).forEach((key) => {
-    if (search[key] || search[key] == 0) {
-      search[key] = undefined
+  Object.keys(props.search).forEach((key) => {
+    if (props.search[key] || props.search[key] == 0) {
+      props.search[key] = undefined
     }
   })
   emit('onLoad')
