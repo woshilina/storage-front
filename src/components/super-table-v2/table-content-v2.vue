@@ -8,6 +8,6 @@
   </div>
 </template>
 <script lang="jsx" setup>
-const { data, columns } = defineProps(['data', 'columns'])
+defineProps(['data', 'columns'])
 </script>
 <style lang="scss"></style>

@@ -15,7 +15,7 @@
           </template>
         </SearchFormV2>
       </div>
-      <TableContentV2 :columns="columns" :data="data" @handle-del="handleDel" @handle-edit="handleEdit"> </TableContentV2>
+      <TableContentV2 :columns="columns" :data="data"></TableContentV2>
     </div>
     <el-pagination
       class="table_pagination"
@@ -28,7 +28,6 @@
       @size-change="sizeChange"
       @current-change="currentChange"
     />
-    <!-- <TableDialog v-if="isOpenDialog" v-model="form" :columns="option.columns" @add-save="addSave" @edit-save="editSave" @close-dialog="closeDialog"></TableDialog> -->
   </div>
 </template>
 <script setup>
@@ -39,23 +38,18 @@ const props = defineProps({
   filters: { type: Array },
   columns: { type: Array },
   data: { type: Array },
-  deleteIds: { type: Array },
   search: { type: Object },
   page: { type: Object },
   operations: {}
 })
-
-const emit = defineEmits(['onLoad', 'handleEdit', 'handleAdd', 'handleMultiDel', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
-function handleFilter() {
+const emit = defineEmits(['onLoad', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
+const handleFilter = () => {
   emit('handleFilter')
-}
-const handleMultiDel = () => {
-  emit('handleMultiDel')
 }
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
-function resetChange() {
+const resetChange = () => {
   // 清空自定义搜索字段
   Object.keys(props.search).forEach((key) => {
     if (props.search[key] || props.search[key] == 0) {
@@ -64,18 +58,7 @@ function resetChange() {
   })
   emit('onLoad')
 }
-//点击新增
-const handleAdd = () => {
-  emit('handleAdd')
-}
-const handleEdit = (index, row) => {
-  emit('handleEdit', index, row)
-}
 
-//点击行删除
-const handleDel = (index, row) => {
-  emit('rowDel', index, row)
-}
 const sizeChange = (val) => {
   emit('sizeChange', val)
 }

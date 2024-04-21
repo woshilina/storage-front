@@ -21,11 +21,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 const queryRef = ref()
-const { filters, search } = defineProps(['filters', 'search'])
+const props = defineProps(['filters', 'search'])
 const searchRules = computed(() => {
   const rules = {}
-  filters.forEach((col) => {
-    if (col.search && col.searchRules && col.searchRules.length > 0) {
+  props.filters.forEach((col) => {
+    if (col.searchRules && col.searchRules.length > 0) {
       rules[col.prop] = col.searchRules
     }
   })
@@ -35,7 +35,6 @@ const emit = defineEmits(['handleFilter', 'searchReset', 'searchChange'])
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
-
 function onQuery() {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {

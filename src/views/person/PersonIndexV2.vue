@@ -1,16 +1,14 @@
 <template>
   <SuperTableV2
-    :columns="columns"
-    :filters="filters"
-    :data="data"
     :operations="operations"
+    :filters="filters"
     :search="search"
-    :deleteIds="deleteIds"
+    :columns="columns"
+    :data="data"
     :page="page"
     @handle-filter="handleFilter"
     @search-change="searchChange"
     @on-load="onLoad"
-    @row-del="rowDel"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   >
@@ -22,7 +20,7 @@
       </div>
     </template>
   </SuperTableV2>
-  <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"> </PersonDialog>
+  <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"></PersonDialog>
 </template>
 <script lang="jsx" setup>
 import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
