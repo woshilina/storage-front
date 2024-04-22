@@ -9,8 +9,8 @@
             </template>
           </template>
         </div>
-        <SearchFormV2 :filters="filters" :search="search" @handle-filter="handleFilter" @search-reset="resetChange" @search-change="searchChange">
-          <template #column="{ prop }">
+        <SearchFormV2 :filters="filters" @handle-filter="handleFilter" @search-reset="resetChange" @search-change="searchChange">
+          <template #filter="{ prop }">
             <slot :name="prop + '-search'"></slot>
           </template>
         </SearchFormV2>
@@ -35,10 +35,9 @@ import TableContentV2 from './table-content-v2.vue'
 import { ElButton } from 'element-plus'
 import SearchFormV2 from './search-form-v2.vue'
 const props = defineProps({
-  filters: { type: Array },
+  filters: { type: Object },
   columns: { type: Array },
   data: { type: Array },
-  search: { type: Object },
   page: { type: Object },
   operations: {}
 })
@@ -51,9 +50,9 @@ const searchChange = (value, columnProp) => {
 }
 const resetChange = () => {
   // 清空自定义搜索字段
-  Object.keys(props.search).forEach((key) => {
-    if (props.search[key] || props.search[key] == 0) {
-      props.search[key] = undefined
+  Object.keys(props.filters.search).forEach((key) => {
+    if (props.filters.search[key] || props.filters.search[key] == 0) {
+      props.filters.search[key] = undefined
     }
   })
   emit('onLoad')

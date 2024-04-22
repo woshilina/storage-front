@@ -2,7 +2,6 @@
   <SuperTableV2
     :operations="operations"
     :filters="filters"
-    :search="search"
     :columns="columns"
     :data="data"
     :page="page"
@@ -14,9 +13,9 @@
   >
     <template #age-search>
       <div class="inputrange">
-        <el-input v-model.number="search.fromAge" placeholder="起始年龄" clearable />
+        <el-input v-model.number="filters.search.fromAge" placeholder="起始年龄" clearable />
         <div class="inputrange_line">-</div>
-        <el-input v-model.number="search.toAge" placeholder="终止年龄" clearable />
+        <el-input v-model.number="filters.search.toAge" placeholder="终止年龄" clearable />
       </div>
     </template>
   </SuperTableV2>
@@ -30,15 +29,14 @@ import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
-const search = reactive({})
 const checkAge = (rule, value, callback) => {
-  if (!search.fromAge && !search.toAge) {
+  if (!filters.value.search.fromAge && !filters.value.search.toAge) {
     callback()
-  } else if (!search.fromAge || !search.toAge) {
+  } else if (!filters.value.search.fromAge || !filters.value.search.toAge) {
     return callback(new Error('请完整输入年龄范围'))
-  } else if (!Number.isInteger(search.fromAge) || !Number.isInteger(search.toAge)) {
+  } else if (!Number.isInteger(filters.value.search.fromAge) || !Number.isInteger(filters.value.search.toAge)) {
     return callback(new Error('请输入整数'))
-  } else if (search.fromAge > search.toAge) {
+  } else if (filters.value.search.fromAge > filters.value.search.toAge) {
     return callback(new Error('起始年龄应不大于终止年龄'))
   } else {
     callback()
@@ -103,52 +101,97 @@ const operations = computed(() => {
     }
   ]
 })
-const filters = [
+const shortcuts = [
   {
-    label: '姓名',
-    prop: 'name',
-    type: 'input',
-    width: 200,
-    rules: [
-      {
-        required: true,
-        message: '请输入姓名',
-        trigger: 'blur'
-      }
-    ]
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    }
   },
   {
-    label: '性别',
-    prop: 'sex',
-    type: 'select',
-    width: 140,
-    rules: [
-      {
-        required: true,
-        message: '请选择性别',
-        trigger: 'blur'
-      }
-    ],
-    dicData: [
-      { label: '男', value: '1' },
-      { label: '女', value: '2' }
-    ]
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    }
   },
   {
-    label: '年龄',
-    prop: 'age',
-    type: 'input',
-    width: 250,
-    rules: [
-      {
-        required: true,
-        message: '请输入年龄',
-        trigger: 'blur'
-      }
-    ],
-    searchRules: [{ validator: checkAge, trigger: 'blur' }]
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    }
   }
 ]
+const filters = ref({
+  search: {},
+  items: [
+    {
+      label: '姓名',
+      prop: 'name',
+      type: 'input',
+      width: 200,
+      rules: [
+        {
+          required: true,
+          message: '请输入姓名',
+          trigger: 'blur'
+        }
+      ]
+    },
+    {
+      label: '性别',
+      prop: 'sex',
+      type: 'radio',
+      width: 150,
+      rules: [
+        {
+          required: true,
+          message: '请选择性别',
+          trigger: 'blur'
+        }
+      ],
+      dicData: [
+        { label: '男', value: '1' },
+        { label: '女', value: '2' }
+      ]
+    },
+    {
+      label: '年龄',
+      prop: 'age',
+      type: 'input',
+      width: 250,
+      rules: [
+        {
+          required: true,
+          message: '请输入年龄',
+          trigger: 'blur'
+        }
+      ],
+      searchRules: [{ validator: checkAge, trigger: 'blur' }]
+    },
+    {
+      label: '日期',
+      prop: 'date',
+      type: 'date',
+      width: 200
+    },
+    {
+      label: '日期范围',
+      prop: 'dateRange',
+      type: 'daterange',
+      width: 350,
+      shortcuts: shortcuts
+    }
+  ]
+})
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
@@ -262,13 +305,13 @@ const columns = [
   }
 ]
 const searchChange = (value, columnProp) => {
-  search[columnProp] = value
+  filters.value.search[columnProp] = value
 }
 function onLoad() {
   const queryParams = {}
-  Object.keys(search).forEach((key) => {
-    if (search[key] !== '') {
-      queryParams[key] = search[key]
+  Object.keys(filters.value.search).forEach((key) => {
+    if (filters.value.search[key] !== '') {
+      queryParams[key] = filters.value.search[key]
     }
   })
   const params = { currentPage: page.currentPage, pageSize: page.pageSize, ...queryParams }
