@@ -11,13 +11,6 @@
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   >
-    <template #age-search>
-      <div class="inputrange">
-        <el-input v-model.number="filters.search.fromAge" placeholder="起始年龄" clearable />
-        <div class="inputrange_line">-</div>
-        <el-input v-model.number="filters.search.toAge" placeholder="终止年龄" clearable />
-      </div>
-    </template>
   </SuperTableV2>
   <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"></PersonDialog>
 </template>
@@ -29,19 +22,19 @@ import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
-const checkAge = (rule, value, callback) => {
-  if (!filters.value.search.fromAge && !filters.value.search.toAge) {
-    callback()
-  } else if (!filters.value.search.fromAge || !filters.value.search.toAge) {
-    return callback(new Error('请完整输入年龄范围'))
-  } else if (!Number.isInteger(filters.value.search.fromAge) || !Number.isInteger(filters.value.search.toAge)) {
-    return callback(new Error('请输入整数'))
-  } else if (filters.value.search.fromAge > filters.value.search.toAge) {
-    return callback(new Error('起始年龄应不大于终止年龄'))
-  } else {
-    callback()
-  }
-}
+// const checkAge = (rule, value, callback) => {
+//   if (!filters.value.search.fromAge && !filters.value.search.toAge) {
+//     callback()
+//   } else if (!filters.value.search.fromAge || !filters.value.search.toAge) {
+//     return callback(new Error('请完整输入年龄范围'))
+//   } else if (!Number.isInteger(filters.value.search.fromAge) || !Number.isInteger(filters.value.search.toAge)) {
+//     return callback(new Error('请输入整数'))
+//   } else if (filters.value.search.fromAge > filters.value.search.toAge) {
+//     return callback(new Error('起始年龄应不大于终止年龄'))
+//   } else {
+//     callback()
+//   }
+// }
 const page = reactive({
   total: 0,
   currentPage: 1,
@@ -130,68 +123,70 @@ const shortcuts = [
     }
   }
 ]
-const filters = ref({
-  search: {},
-  items: [
-    {
-      label: '姓名',
-      prop: 'name',
-      type: 'input',
-      width: 200,
-      rules: [
-        {
-          required: true,
-          message: '请输入姓名',
-          trigger: 'blur'
-        }
-      ]
-    },
-    {
-      label: '性别',
-      prop: 'sex',
-      type: 'radio',
-      width: 150,
-      rules: [
-        {
-          required: true,
-          message: '请选择性别',
-          trigger: 'blur'
-        }
-      ],
-      dicData: [
-        { label: '男', value: '1' },
-        { label: '女', value: '2' }
-      ]
-    },
-    {
-      label: '年龄',
-      prop: 'age',
-      type: 'input',
-      width: 250,
-      rules: [
-        {
-          required: true,
-          message: '请输入年龄',
-          trigger: 'blur'
-        }
-      ],
-      searchRules: [{ validator: checkAge, trigger: 'blur' }]
-    },
-    {
-      label: '日期',
-      prop: 'date',
-      type: 'date',
-      width: 200
-    },
-    {
-      label: '日期范围',
-      prop: 'dateRange',
-      type: 'daterange',
-      width: 350,
-      shortcuts: shortcuts
-    }
-  ]
-})
+const filters = ref([
+  {
+    label: '姓名',
+    prop: 'name',
+    type: 'input',
+    width: 200,
+    value: '',
+    rules: [
+      {
+        required: true,
+        message: '请输入姓名',
+        trigger: 'blur'
+      }
+    ]
+  },
+  {
+    label: '性别',
+    prop: 'sex',
+    type: 'radio',
+    width: 150,
+    value: '',
+    rules: [
+      {
+        required: true,
+        message: '请选择性别',
+        trigger: 'blur'
+      }
+    ],
+    dicData: [
+      { label: '男', value: '1' },
+      { label: '女', value: '2' }
+    ]
+  },
+  {
+    label: '年龄',
+    prop: 'age',
+    type: 'input',
+    width: 250,
+    value: '',
+    rules: [
+      {
+        required: true,
+        message: '请输入年龄',
+        trigger: 'blur'
+      }
+    ]
+    // searchRules: [{ validator: checkAge, trigger: 'blur' }]
+  },
+  {
+    label: '日期',
+    prop: 'date',
+    type: 'date',
+    width: 200,
+    value: ''
+  },
+  {
+    label: '日期范围',
+    prop: 'dateRange',
+    type: 'daterange',
+    width: 350,
+    value: '',
+    shortcuts: shortcuts
+  }
+])
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
@@ -305,13 +300,18 @@ const columns = [
   }
 ]
 const searchChange = (value, columnProp) => {
-  filters.value.search[columnProp] = value
+  for (let item of filters.value) {
+    if (item.prop == columnProp) {
+      item.value = value
+      break
+    }
+  }
 }
 function onLoad() {
   const queryParams = {}
-  Object.keys(filters.value.search).forEach((key) => {
-    if (filters.value.search[key] !== '') {
-      queryParams[key] = filters.value.search[key]
+  filters.value.forEach((item) => {
+    if (item.value !== '') {
+      queryParams[item.prop] = item.value
     }
   })
   const params = { currentPage: page.currentPage, pageSize: page.pageSize, ...queryParams }
@@ -342,7 +342,7 @@ const handleCurrentChange = (val) => {
   onLoad()
 }
 
-//点击行编辑
+// 点击行编辑
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
   formId.value = row.id
@@ -352,7 +352,7 @@ const closeDialog = () => {
   isOpenDialog.value = false
 }
 
-//点击行删除
+// 点击行删除
 const rowDel = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')
     .then(() => {

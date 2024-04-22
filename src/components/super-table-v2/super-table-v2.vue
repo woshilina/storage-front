@@ -1,21 +1,17 @@
 <template>
   <div class="super-table-v2">
     <div>
-      <div class="top-filter">
-        <div class="top-btn">
+      <div class="header">
+        <div class="header-operations">
           <template v-if="operations && operations.length > 0">
             <template v-for="btn in operations">
               <el-button :type="btn.type" :icon="btn.icon" :disabled="btn.disabled" @click="btn.click">{{ btn.text }}</el-button>
             </template>
           </template>
         </div>
-        <SearchFormV2 :filters="filters" @handle-filter="handleFilter" @search-reset="resetChange" @search-change="searchChange">
-          <template #filter="{ prop }">
-            <slot :name="prop + '-search'"></slot>
-          </template>
-        </SearchFormV2>
+        <Filters :filters="filters" @handle-filter="handleFilter" @search-change="searchChange"> </Filters>
       </div>
-      <TableContentV2 :columns="columns" :data="data"></TableContentV2>
+      <TableContent :columns="columns" :data="data"></TableContent>
     </div>
     <el-pagination
       class="table_pagination"
@@ -31,9 +27,9 @@
   </div>
 </template>
 <script setup>
-import TableContentV2 from './table-content-v2.vue'
+import TableContent from './table-content.vue'
 import { ElButton } from 'element-plus'
-import SearchFormV2 from './search-form-v2.vue'
+import Filters from './filters.vue'
 const props = defineProps({
   filters: { type: Object },
   columns: { type: Array },
@@ -48,15 +44,15 @@ const handleFilter = () => {
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
-const resetChange = () => {
-  // 清空自定义搜索字段
-  Object.keys(props.filters.search).forEach((key) => {
-    if (props.filters.search[key] || props.filters.search[key] == 0) {
-      props.filters.search[key] = undefined
-    }
-  })
-  emit('onLoad')
-}
+// const resetChange = () => {
+//   // 清空自定义搜索字段
+//   Object.keys(props.filters.search).forEach((key) => {
+//     if (props.filters.search[key] || props.filters.search[key] == 0) {
+//       props.filters.search[key] = undefined
+//     }
+//   })
+//   emit('onLoad')
+// }
 
 const sizeChange = (val) => {
   emit('sizeChange', val)
@@ -72,22 +68,13 @@ const currentChange = (val) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  .top-filter {
+  .header {
     display: flex;
     justify-content: space-between;
-    .top-btn {
+    .header-operations {
       flex-shrink: 0;
     }
-    .inputrange {
-      display: inline-flex;
-      flex-grow: 1;
-
-      .inputrange_line {
-        margin: 0 8px;
-      }
-    }
   }
-
   .table_pagination {
     margin: 20px;
     justify-content: right;
