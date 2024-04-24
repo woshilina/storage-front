@@ -1,5 +1,5 @@
 <template>
-  <el-form class="filter-form-v2" ref="queryRef" :rules="searchRules">
+  <el-form class="filter-form-v2" ref="queryRef" :model="filterForm" :rules="searchRules">
     <template v-for="filter in filters" :key="filter.prop">
       <div :style="{ width: filter.width + 'px' }">
         <el-form-item :label="filter.label" :prop="filter.prop">
@@ -10,18 +10,26 @@
           <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => searchChange(value, filter.prop)">
             <el-radio v-for="dic in filter.dicData" :key="dic.value" :value="dic.value">{{ dic.label }}</el-radio>
           </el-radio-group>
-          <div v-else-if="filter.type == 'agerange'" class="age-range-picker">
-            <el-input v-model.number="fromAge" placeholder="起始年龄" clearable />
+          <div v-else-if="filter.type == 'agerange'" :model-value="filter.value" class="age-range-picker">
+            <el-input-number
+              :model-value="filter.value[0]"
+              @input.native="(value) => searchChange([value, filter.value[1]], filter.prop)"
+              :min="0"
+              :max="100"
+              :controls="false"
+              placeholder="最小年龄"
+            />
             <div class="inputrange_line">-</div>
-            <el-input v-model.number="toAge" placeholder="终止年龄" clearable />
+            <el-input-number
+              :model-value="filter.value[1]"
+              @input.native="(value) => searchChange([filter.value[0], value], filter.prop)"         
+              :min="1"
+              :max="100"
+              :controls="false"
+              placeholder="最大年龄"
+            />
           </div>
-          <el-date-picker
-            v-else-if="filter.type == 'date'"
-            :model-value="filter.value"
-            @update:modelValue="(value) => searchChange(value, filter.prop)"
-            type="date"
-            placeholder="Pick a day"
-          />
+          <el-date-picker v-else-if="filter.type == 'date'" :model-value="filter.value" @update:modelValue="(value) => searchChange(value, filter.prop)" type="date" placeholder="Pick a day" />
           <el-date-picker
             v-else-if="filter.type == 'daterange'"
             :model-value="filter.value"
@@ -43,19 +51,26 @@
   </el-form>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 const queryRef = ref()
 const props = defineProps(['filters'])
+const emit = defineEmits(['handleFilter', 'searchChange'])
+const initForm = reactive({})
+const filterForm = computed(() => {
+  props.filters.forEach((col) => {
+    initForm[col.prop] = col.value
+  })
+  return initForm
+})
 const searchRules = computed(() => {
   const rules = {}
   props.filters.forEach((col) => {
-    if (col.searchRules && col.searchRules.length > 0) {
-      rules[col.prop] = col.searchRules
+    if (col.rules && col.rules.length > 0) {
+      rules[col.prop] = col.rules
     }
   })
   return rules
 })
-const emit = defineEmits(['handleFilter', 'searchReset', 'searchChange'])
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
@@ -72,7 +87,9 @@ function onQuery() {
 function onEmpty() {
   if (!queryRef.value) return
   queryRef.value.resetFields()
-  emit('searchReset')
+  props.filters.forEach((item) => {
+    emit('searchChange', '', item.prop)
+  })
 }
 </script>
 <style lang="scss">
@@ -93,16 +110,26 @@ function onEmpty() {
     .age-range-picker {
       display: inline-flex;
       flex-grow: 1;
+      background-color: var(--el-bg-color);
+      box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
+      border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
+      .el-input-number {
+        width: 100%;
+        .el-input__wrapper {
+          padding: 0 5px;
+          background-color: transparent;
+          border: none;
+          box-shadow: none;
+        }
+      }
       .inputrange_line {
         margin: 0 8px;
       }
     }
   }
   .filter-btn {
-    // width: 190px;
     flex-shrink: 0;
     margin-left: 20px;
-    // display: flex;
   }
 }
 </style>

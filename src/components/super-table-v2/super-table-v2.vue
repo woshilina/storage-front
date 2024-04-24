@@ -44,15 +44,6 @@ const handleFilter = () => {
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
-// const resetChange = () => {
-//   // 清空自定义搜索字段
-//   Object.keys(props.filters.search).forEach((key) => {
-//     if (props.filters.search[key] || props.filters.search[key] == 0) {
-//       props.filters.search[key] = undefined
-//     }
-//   })
-//   emit('onLoad')
-// }
 
 const sizeChange = (val) => {
   emit('sizeChange', val)

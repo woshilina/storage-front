@@ -22,19 +22,21 @@ import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
-// const checkAge = (rule, value, callback) => {
-//   if (!filters.value.search.fromAge && !filters.value.search.toAge) {
-//     callback()
-//   } else if (!filters.value.search.fromAge || !filters.value.search.toAge) {
-//     return callback(new Error('请完整输入年龄范围'))
-//   } else if (!Number.isInteger(filters.value.search.fromAge) || !Number.isInteger(filters.value.search.toAge)) {
-//     return callback(new Error('请输入整数'))
-//   } else if (filters.value.search.fromAge > filters.value.search.toAge) {
-//     return callback(new Error('起始年龄应不大于终止年龄'))
-//   } else {
-//     callback()
-//   }
-// }
+const checkAge = (rule, value, callback) => {
+  if (!value) {
+    callback()
+  } else if (!value[0] || !value[1]) {
+    return callback(new Error('请完整输入年龄范围'))
+  } else if (!Number.isInteger(+value[0]) || !Number.isInteger(+value[1])) {
+    return callback(new Error('请输入整数'))
+  } else if (value[0] > value[1]) {
+    return callback(new Error('起始年龄应不大于终止年龄'))
+  } else if (value[0] < 0) {
+    return callback(new Error('请输入非负整数'))
+  } else {
+    callback()
+  }
+}
 const page = reactive({
   total: 0,
   currentPage: 1,
@@ -129,28 +131,14 @@ const filters = ref([
     prop: 'name',
     type: 'input',
     width: 200,
-    value: '',
-    rules: [
-      {
-        required: true,
-        message: '请输入姓名',
-        trigger: 'blur'
-      }
-    ]
+    value: ''
   },
   {
     label: '性别',
     prop: 'sex',
     type: 'radio',
-    width: 150,
+    width: 160,
     value: '',
-    rules: [
-      {
-        required: true,
-        message: '请选择性别',
-        trigger: 'blur'
-      }
-    ],
     dicData: [
       { label: '男', value: '1' },
       { label: '女', value: '2' }
@@ -159,17 +147,10 @@ const filters = ref([
   {
     label: '年龄',
     prop: 'age',
-    type: 'input',
+    type: 'agerange',
     width: 250,
-    value: '',
-    rules: [
-      {
-        required: true,
-        message: '请输入年龄',
-        trigger: 'blur'
-      }
-    ]
-    // searchRules: [{ validator: checkAge, trigger: 'blur' }]
+    value: [],
+    rules: [{ validator: checkAge, trigger: 'blur' }]
   },
   {
     label: '日期',
@@ -330,6 +311,7 @@ const handleFilter = () => {
   page.currentPage = 1
   onLoad()
 }
+
 onMounted(() => {
   onLoad()
 })
