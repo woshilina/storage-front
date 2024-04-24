@@ -10,7 +10,7 @@
           <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => searchChange(value, filter.prop)">
             <el-radio v-for="dic in filter.dicData" :key="dic.value" :value="dic.value">{{ dic.label }}</el-radio>
           </el-radio-group>
-          <div v-else-if="filter.type == 'agerange'" :model-value="filter.value" class="age-range-picker">
+          <div v-else-if="filter.type == 'agerange'"  class="age-range-picker">
             <el-input-number
               :model-value="filter.value[0]"
               @input.native="(value) => searchChange([value, filter.value[1]], filter.prop)"
