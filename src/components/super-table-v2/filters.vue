@@ -10,7 +10,7 @@
           <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => searchChange(value, filter.prop)">
             <el-radio v-for="dic in filter.dicData" :key="dic.value" :value="dic.value">{{ dic.label }}</el-radio>
           </el-radio-group>
-          <div v-else-if="filter.type == 'agerange'"  class="age-range-picker">
+          <div v-else-if="filter.type == 'agerange'" class="age-range-picker">
             <el-input-number
               :model-value="filter.value[0]"
               @input.native="(value) => searchChange([value, filter.value[1]], filter.prop)"
@@ -22,7 +22,7 @@
             <div class="inputrange_line">-</div>
             <el-input-number
               :model-value="filter.value[1]"
-              @input.native="(value) => searchChange([filter.value[0], value], filter.prop)"         
+              @input.native="(value) => searchChange([filter.value[0], value], filter.prop)"
               :min="1"
               :max="100"
               :controls="false"
@@ -85,8 +85,6 @@ function onQuery() {
   })
 }
 function onEmpty() {
-  if (!queryRef.value) return
-  queryRef.value.resetFields()
   props.filters.forEach((item) => {
     emit('searchChange', '', item.prop)
   })

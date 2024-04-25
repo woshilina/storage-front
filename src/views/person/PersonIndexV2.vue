@@ -15,28 +15,15 @@
   <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"></PersonDialog>
 </template>
 <script lang="jsx" setup>
+import SuperTableV2 from '@/components/super-table-v2/super-table-v2.vue'
 import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
+import { checkAge } from '@/utils/validate.js'
 const formId = ref('')
 const isOpenDialog = ref(false)
-const checkAge = (rule, value, callback) => {
-  if (!value) {
-    callback()
-  } else if (!value[0] || !value[1]) {
-    return callback(new Error('请完整输入年龄范围'))
-  } else if (!Number.isInteger(+value[0]) || !Number.isInteger(+value[1])) {
-    return callback(new Error('请输入整数'))
-  } else if (value[0] > value[1]) {
-    return callback(new Error('起始年龄应不大于终止年龄'))
-  } else if (value[0] < 0) {
-    return callback(new Error('请输入非负整数'))
-  } else {
-    callback()
-  }
-}
 const page = reactive({
   total: 0,
   currentPage: 1,
@@ -96,6 +83,7 @@ const operations = computed(() => {
     }
   ]
 })
+
 const shortcuts = [
   {
     text: 'Last week',
@@ -125,6 +113,7 @@ const shortcuts = [
     }
   }
 ]
+
 const filters = ref([
   {
     label: '姓名',
@@ -168,9 +157,11 @@ const filters = ref([
     shortcuts: shortcuts
   }
 ])
+
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
+
 const columns = [
   {
     key: 'selection',
@@ -280,14 +271,7 @@ const columns = [
     align: 'center'
   }
 ]
-const searchChange = (value, columnProp) => {
-  for (let item of filters.value) {
-    if (item.prop == columnProp) {
-      item.value = value
-      break
-    }
-  }
-}
+
 function onLoad() {
   const queryParams = {}
   filters.value.forEach((item) => {
@@ -307,14 +291,22 @@ function onLoad() {
     })
     .catch(() => {})
 }
-const handleFilter = () => {
-  page.currentPage = 1
-  onLoad()
-}
 
 onMounted(() => {
   onLoad()
 })
+const searchChange = (value, columnProp) => {
+  for (let item of filters.value) {
+    if (item.prop == columnProp) {
+      item.value = value
+      break
+    }
+  }
+}
+const handleFilter = () => {
+  page.currentPage = 1
+  onLoad()
+}
 const handleSizeChange = (val) => {
   page.pageSize = val
   onLoad()
@@ -323,17 +315,13 @@ const handleCurrentChange = (val) => {
   page.currentPage = val
   onLoad()
 }
-
-// 点击行编辑
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
   formId.value = row.id
 }
-
 const closeDialog = () => {
   isOpenDialog.value = false
 }
-
 // 点击行删除
 const rowDel = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')

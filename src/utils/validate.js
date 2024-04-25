@@ -12,3 +12,19 @@ export const validateID = (rule, value, callback) => {
     callback()
   }
 }
+
+export const checkAge = (rule, value, callback) => {
+  if (!value) {
+    callback()
+  } else if (!value[0] || !value[1]) {
+    return callback(new Error('请完整输入年龄范围'))
+  } else if (!Number.isInteger(+value[0]) || !Number.isInteger(+value[1])) {
+    return callback(new Error('请输入整数'))
+  } else if (value[0] > value[1]) {
+    return callback(new Error('起始年龄应不大于终止年龄'))
+  } else if (value[0] < 0) {
+    return callback(new Error('请输入非负整数'))
+  } else {
+    callback()
+  }
+}
