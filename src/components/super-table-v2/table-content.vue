@@ -7,7 +7,7 @@
     </el-auto-resizer>
   </div>
 </template>
-<script lang="jsx" setup>
+<script  setup>
 defineProps(['data', 'columns'])
 </script>
 <style lang="scss"></style>

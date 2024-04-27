@@ -16,12 +16,12 @@
 </template>
 <script lang="jsx" setup>
 import SuperTableV2 from '@/components/super-table-v2/super-table-v2.vue'
+import PersonDialog from './PersonDialog.vue'
 import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import http from '@/utils/request.js'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
-import PersonDialog from './PersonDialog.vue'
 import { checkAge } from '@/utils/validate.js'
+import http from '@/utils/request.js'
 const formId = ref('')
 const isOpenDialog = ref(false)
 const page = reactive({
@@ -285,9 +285,6 @@ function onLoad() {
     .then((res) => {
       data.value = res.data.data
       page.total = res.data.total
-      // if (res.data.totalPage > 1) {
-      //   page.currentPage = 1
-      // }
     })
     .catch(() => {})
 }
