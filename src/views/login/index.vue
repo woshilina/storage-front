@@ -9,16 +9,7 @@
           <img class="login-icon" src="@/assets/images/logo.svg" alt="" />
           <h2 class="logo-text">Geeker-Admin</h2>
         </div>
-        <el-form
-          ref="ruleFormRef"
-          style="max-width: 600px"
-          :model="ruleForm"
-          status-icon
-          :rules="rules"
-          label-width="auto"
-          size="large"
-          class="demo-ruleForm"
-        >
+        <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="rules" label-width="auto" size="large" class="demo-ruleForm">
           <el-form-item prop="username">
             <el-input v-model="ruleForm.username" placeholder="用户名" :prefix-icon="User" />
           </el-form-item>
@@ -26,8 +17,8 @@
             <el-input v-model="ruleForm.password" type="password" placeholder="密码" show-password :prefix-icon="Lock" autocomplete="off" />
           </el-form-item>
           <el-form-item class="login-btns">
-            <el-button @click="resetForm(ruleFormRef)" round size="large" :icon="CircleClose">重置</el-button>
             <el-button type="primary" @click="submitForm(ruleFormRef)" round :icon="UserFilled">登录</el-button>
+            <el-button type="primary" plain @click="registerForm(ruleFormRef)" round :icon="UserFilled">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -35,39 +26,85 @@
   </div>
 </template>
 <script setup>
-import http from "@/utils/request.js";
-import { ref, reactive } from "vue";
-import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
-const ruleFormRef = ref();
+import http from '@/utils/request.js'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, reactive } from 'vue'
+import { User, Lock, CircleClose, UserFilled } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+const router = useRouter()
+const route = useRoute()
+const ruleFormRef = ref()
 const ruleForm = reactive({
-  username: "",
-  password: "",
-});
+  username: '',
+  password: ''
+})
 const rules = reactive({
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [
     {
       required: true,
-      message: "请输入密码",
-      trigger: "blur",
-    },
-  ],
-});
+      message: '请输入密码',
+      trigger: 'blur'
+    }
+  ]
+})
 const submitForm = async (formEl) => {
-  if (!formEl) return;
+  if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log(ruleForm);
-      http.post("/api/v1/user/login", ruleForm).then((res) => res.data);
+      const loginData = {
+        username: ruleForm.username,
+        password: ruleForm.password
+      }
+      http.post('/api/v1/auth/login', loginData).then((res) => {
+        if (res.data.status == '200') {
+          ElMessage({
+            message: '登录成功',
+            type: 'success'
+          })
+          router.push('/')
+        } else {
+          ElMessage({
+            message: res.data.message,
+            type: 'error'
+          })
+        }
+      })
     } else {
-      console.log("error submit!", fields);
+      console.log('error submit!', fields)
     }
-  });
-};
+  })
+}
+const registerForm = async (formEl) => {
+  if (!formEl) return
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      const registerData = {
+        username: ruleForm.username,
+        password: ruleForm.password
+      }
+      http.post('/api/v1/user/register', registerData).then((res) => {
+        if (res.status == '200' || res.status == '201') {
+          ElMessage({
+            message: '注册成功,请登录',
+            type: 'success'
+          })
+        } else {
+          ElMessage({
+            message: res.data.message,
+            type: 'error'
+          })
+        }
+      })
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
 const resetForm = (formEl) => {
-  if (!formEl) return;
-  formEl.resetFields();
-};
+  if (!formEl) return
+  formEl.resetFields()
+}
 </script>
 <style lang="scss" scoped>
 .login_container {
@@ -76,7 +113,7 @@ const resetForm = (formEl) => {
   padding: 20px;
   min-height: 550px;
   background-color: #eee;
-  background-image: url("@/assets/images/login_bg.svg");
+  background-image: url('@/assets/images/login_bg.svg');
   background-size: cover;
   .login_box {
     height: 100%;
