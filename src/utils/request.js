@@ -40,13 +40,13 @@ axiosInstance.interceptors.response.use(
     const userStore = useUserStore()
     // 统一错误提示
     ElMessage({
-      message: error.response.data.message,
+      message: error.response.statusText,
       type: 'error'
     })
     // 401 token 失效处理
     // 清除本地用户数据
     // 跳转到登录页
-    if (e.response.status === 401) {
+    if (error.response.status === 401) {
       userStore.clearUserInfo()
       router.push('/login')
     }

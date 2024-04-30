@@ -11,10 +11,8 @@ export const useUserStore = defineStore(
     const userInfo = ref({})
     const setUserInfo = async (loginData) => {
       await http.post('/api/v1/auth/login', loginData).then((res) => {
-        console.log(res)
         if (res.status == '200') {
           userInfo.value = res.data
-          console.log(userInfo.value)
           ElMessage({
             message: '登录成功',
             type: 'success'
