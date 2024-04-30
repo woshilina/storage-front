@@ -28,11 +28,13 @@
 <script setup>
 import http from '@/utils/request.js'
 import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import { ref, reactive } from 'vue'
 import { User, Lock, CircleClose, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const ruleFormRef = ref()
 const ruleForm = reactive({
   username: '',
@@ -56,20 +58,7 @@ const submitForm = async (formEl) => {
         username: ruleForm.username,
         password: ruleForm.password
       }
-      http.post('/api/v1/auth/login', loginData).then((res) => {
-        if (res.data.status == '200') {
-          ElMessage({
-            message: '登录成功',
-            type: 'success'
-          })
-          router.push('/')
-        } else {
-          ElMessage({
-            message: res.data.message,
-            type: 'error'
-          })
-        }
-      })
+      userStore.setUserInfo(loginData)
     } else {
       console.log('error submit!', fields)
     }

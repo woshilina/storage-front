@@ -1,4 +1,5 @@
 <template>
+  {{ userStore.userInfo.username }}<el-button @click="goOut">退出</el-button>
   <SuperTableV2
     :operations="operations"
     :filters="filters"
@@ -17,11 +18,15 @@
 <script lang="jsx" setup>
 import SuperTableV2 from '@/components/super-table-v2/super-table-v2.vue'
 import PersonDialog from './PersonDialog.vue'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
 import http from '@/utils/request.js'
+const userStore = useUserStore()
+const router = useRouter()
 const formId = ref('')
 const isOpenDialog = ref(false)
 const page = reactive({
@@ -341,6 +346,11 @@ const rowDel = (index, row) => {
     .catch(() => {
       // catch error
     })
+}
+const goOut = () => {
+  userStore.clearUserInfo()
+  // 跳转到登录页面
+  router.push('/login')
 }
 </script>
 <style lang="scss"></style>

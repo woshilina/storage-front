@@ -8,16 +8,20 @@ import '@/styles/index.scss'
 import 'element-plus/theme-chalk/display.css'
 // import 'virtual:svg-icons-register'
 import router from '@/router'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from '@/App.vue'
 import SuperTable from './components/super-table/super-table.vue'
 
 // createApp(App).mount('#app')
 const app = createApp(App)
-
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 // app.provide('$axios', axios)
 app.component('SuperTable', SuperTable)
 app.use(ElementPlus, {
   locale: zhCn
 })
 app.use(router)
+app.use(pinia)
 app.mount('#app')
