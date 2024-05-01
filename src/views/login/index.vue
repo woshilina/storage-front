@@ -73,7 +73,7 @@ const registerForm = async (formEl) => {
         password: ruleForm.password
       }
       http.post('/api/v1/user/register', registerData).then((res) => {
-        if (res.status == '200' || res.status == '201') {
+        if (res.data.status == '200' || res.data.status == '201') {
           ElMessage({
             message: '注册成功,请登录',
             type: 'success'

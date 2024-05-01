@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
-
+import router from '../router/index'
 //创建 axios 实例
 const axiosInstance = axios.create({
   // timeout: 500,
@@ -40,15 +40,15 @@ axiosInstance.interceptors.response.use(
     const userStore = useUserStore()
     // 统一错误提示
     ElMessage({
-      message: error.response.statusText,
+      message: error.response.data.message,
       type: 'error'
     })
     // 401 token 失效处理
     // 清除本地用户数据
     // 跳转到登录页
-    if (error.response.status === 401) {
+    if (error.response.status == 401) {
       userStore.clearUserInfo()
-      router.push('/login')
+      router.push('/login') 
     }
 
     return Promise.reject(error)
