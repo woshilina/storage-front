@@ -9,7 +9,7 @@
           <img class="login-icon" src="@/assets/images/logo.svg" alt="" />
           <h2 class="logo-text">Geeker-Admin</h2>
         </div>
-        <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="rules" label-width="auto" size="large" class="demo-ruleForm">
+        <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="rules" size="large" class="demo-ruleForm">
           <el-form-item prop="username">
             <el-input v-model="ruleForm.username" placeholder="用户名" :prefix-icon="User" />
           </el-form-item>

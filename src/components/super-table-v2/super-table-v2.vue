@@ -11,7 +11,7 @@
         </div>
         <Filters :filters="filters" @handle-filter="handleFilter" @search-change="searchChange"> </Filters>
       </div>
-      <TableContent :columns="columns" :data="data"></TableContent>
+      <TableContent :columns="columns" :data="data" :loading="loading"></TableContent>
     </div>
     <el-pagination
       class="table_pagination"
@@ -35,7 +35,8 @@ const props = defineProps({
   columns: { type: Array },
   data: { type: Array },
   page: { type: Object },
-  operations: {}
+  operations: {},
+  loading: {}
 })
 const emit = defineEmits(['onLoad', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
 const handleFilter = () => {

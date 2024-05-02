@@ -6,6 +6,7 @@
     :columns="columns"
     :data="data"
     :page="page"
+    :loading="loading"
     @handle-filter="handleFilter"
     @search-change="searchChange"
     @on-load="onLoad"
@@ -25,16 +26,101 @@ import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
 import http from '@/utils/request.js'
+import { useSuperTable } from '@/utils/super-table-v2'
+const url = '/api/v1/personnel/all'
+const shortcuts = [
+  {
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    }
+  },
+  {
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    }
+  },
+  {
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    }
+  }
+]
+
+const filters = ref([
+  {
+    label: '姓名',
+    prop: 'name',
+    type: 'input',
+    width: 200,
+    value: ''
+  },
+  {
+    label: '性别',
+    prop: 'sex',
+    type: 'select',
+    width: 160,
+    value: '',
+    dicData: [
+      { label: '男', value: '1' },
+      { label: '女', value: '2' }
+    ]
+  },
+  {
+    label: '年龄',
+    prop: 'age',
+    type: 'agerange',
+    width: 250,
+    value: '',
+    rules: [{ validator: checkAge, trigger: 'blur' }]
+  }
+  // {
+  //   label: '日期',
+  //   prop: 'date',
+  //   type: 'date',
+  //   width: 200,
+  //   value: ''
+  // },
+  // {
+  //   label: '日期范围',
+  //   prop: 'dateRange',
+  //   type: 'daterange',
+  //   width: 350,
+  //   value: '',
+  //   shortcuts: shortcuts
+  // }
+])
+
+const filterParams = computed(() => {
+  const queryParams = {}
+  filters.value.forEach((item) => {
+    if (item.value !== '') {
+      if (item.prop == 'age') {
+        queryParams.fromAge = item.value[0]
+        queryParams.toAge = item.value[1]
+      } else {
+        queryParams[item.prop] = item.value
+      }
+    }
+  })
+  return queryParams
+})
+const { data, page, loading, onLoad, handleFilter, handleSizeChange, handleCurrentChange } = useSuperTable(url, filterParams)
 const userStore = useUserStore()
 const router = useRouter()
 const formId = ref('')
 const isOpenDialog = ref(false)
-const page = reactive({
-  total: 0,
-  currentPage: 1,
-  pageSize: 10
-})
-const data = ref([])
 const deleteIds = ref([])
 const onHandleAdd = () => {
   formId.value = ''
@@ -88,80 +174,6 @@ const operations = computed(() => {
     }
   ]
 })
-
-const shortcuts = [
-  {
-    text: 'Last week',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    }
-  },
-  {
-    text: 'Last month',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    }
-  },
-  {
-    text: 'Last 3 months',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    }
-  }
-]
-
-const filters = ref([
-  {
-    label: '姓名',
-    prop: 'name',
-    type: 'input',
-    width: 200,
-    value: ''
-  },
-  {
-    label: '性别',
-    prop: 'sex',
-    type: 'radio',
-    width: 160,
-    value: '',
-    dicData: [
-      { label: '男', value: '1' },
-      { label: '女', value: '2' }
-    ]
-  },
-  {
-    label: '年龄',
-    prop: 'age',
-    type: 'agerange',
-    width: 250,
-    value: [],
-    rules: [{ validator: checkAge, trigger: 'blur' }]
-  },
-  {
-    label: '日期',
-    prop: 'date',
-    type: 'date',
-    width: 200,
-    value: ''
-  },
-  {
-    label: '日期范围',
-    prop: 'dateRange',
-    type: 'daterange',
-    width: 350,
-    value: '',
-    shortcuts: shortcuts
-  }
-])
 
 const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
@@ -277,26 +289,6 @@ const columns = [
   }
 ]
 
-function onLoad() {
-  const queryParams = {}
-  filters.value.forEach((item) => {
-    if (item.value !== '') {
-      queryParams[item.prop] = item.value
-    }
-  })
-  const params = { currentPage: page.currentPage, pageSize: page.pageSize, ...queryParams }
-  http
-    .get('/api/v1/personnel/all', { params })
-    .then((res) => {
-      data.value = res.data.data
-      page.total = res.data.total
-    })
-    .catch(() => {})
-}
-
-onMounted(() => {
-  onLoad()
-})
 const searchChange = (value, columnProp) => {
   for (let item of filters.value) {
     if (item.prop == columnProp) {
@@ -305,18 +297,7 @@ const searchChange = (value, columnProp) => {
     }
   }
 }
-const handleFilter = () => {
-  page.currentPage = 1
-  onLoad()
-}
-const handleSizeChange = (val) => {
-  page.pageSize = val
-  onLoad()
-}
-const handleCurrentChange = (val) => {
-  page.currentPage = val
-  onLoad()
-}
+
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
   formId.value = row.id

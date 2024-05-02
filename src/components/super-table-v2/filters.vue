@@ -74,7 +74,7 @@ const searchRules = computed(() => {
 const searchChange = (value, columnProp) => {
   emit('searchChange', value, columnProp)
 }
-function onQuery() {
+const onQuery = () => {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {
     if (valid) {
@@ -84,10 +84,11 @@ function onQuery() {
     }
   })
 }
-function onEmpty() {
+const onEmpty = () => {
   props.filters.forEach((item) => {
     emit('searchChange', '', item.prop)
   })
+  emit('handleFilter')
 }
 </script>
 <style lang="scss">
