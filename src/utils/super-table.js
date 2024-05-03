@@ -1,4 +1,4 @@
-import { ref, onMounted, toValue } from 'vue'
+import { ref, toValue } from 'vue'
 import http from '@/utils/http.js'
 
 export function useSuperTable(url, filterParams) {
@@ -25,9 +25,6 @@ export function useSuperTable(url, filterParams) {
       })
   }
 
-  onMounted(() => {
-    onQueryTableData()
-  })
   const onHandleFilter = () => {
     page.value.currentPage = 1
     onQueryTableData()

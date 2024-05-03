@@ -4,12 +4,12 @@
       <div class="header">
         <div class="header-operations">
           <template v-if="operations && operations.length > 0">
-            <template v-for="btn in operations">
-              <el-button :type="btn.type" :icon="btn.icon" :disabled="btn.disabled" @click="btn.click">{{ btn.text }}</el-button>
+            <template v-for="operation in operations">
+              <el-button :type="operation.type" :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{ operation.text }}</el-button>
             </template>
           </template>
         </div>
-        <Filters :filters="filters" @handle-filter="handleFilter" @filter-change="filterChange"> </Filters>
+        <Filters :filters="filters" @handle-filter="handleFilter" @filter-value-change="filterValueChange"> </Filters>
       </div>
       <TableContent :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
     </div>
@@ -35,15 +35,15 @@ const props = defineProps({
   columns: { type: Array },
   tableData: { type: Array },
   page: { type: Object },
-  operations: {},
-  loading: {}
+  operations: { type: Array },
+  loading: { type: Boolean }
 })
-const emit = defineEmits(['filterChange', 'handleFilter', 'currentChange', 'sizeChange'])
+const emit = defineEmits(['filterValueChange', 'handleFilter', 'currentChange', 'sizeChange'])
 const handleFilter = () => {
   emit('handleFilter')
 }
-const filterChange = (value, columnProp) => {
-  emit('filterChange', value, columnProp)
+const filterValueChange = (value, columnProp) => {
+  emit('filterValueChange', value, columnProp)
 }
 
 const sizeChange = (val) => {

@@ -7,7 +7,7 @@
     :page="page"
     :loading="loading"
     @handle-filter="onHandleFilter"
-    @filter-change="onFilterChange"
+    @filter-value-change="onFilterValueChange"
     @size-change="onSizeChange"
     @current-change="onCurrentChange"
   >
@@ -17,7 +17,7 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import PersonDialog from './PersonDialog.vue'
-import { ref, unref, withModifiers, computed } from 'vue'
+import { ref, unref, withModifiers, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
@@ -104,6 +104,9 @@ const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const deleteIds = ref([])
+onMounted(() => {
+  onQueryTableData()
+})
 const onHandleAdd = () => {
   itemId.value = ''
   isOpenDialog.value = true
@@ -119,9 +122,7 @@ const handleMultiDel = () => {
         onQueryTableData()
       })
     })
-    .catch(() => {
-      // catch error
-    })
+    .catch(() => {})
 }
 
 const multiDelBtnDisable = computed(() => {
@@ -262,7 +263,7 @@ const columns = [
   }
 ]
 
-const onFilterChange = (value, columnProp) => {
+const onFilterValueChange = (value, columnProp) => {
   for (let item of filters.value) {
     if (item.prop == columnProp) {
       item.value = value

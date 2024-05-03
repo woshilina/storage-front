@@ -77,6 +77,7 @@ const getDetails = async () => {
       form.avatar = avatar
       form.email = email
     })
+    .catch(() => {})
     .finally(() => {
       formLoading.value = false
     })
@@ -130,6 +131,7 @@ const addSave = () => {
       })
       emit('queryTableData')
     })
+    .catch(() => {})
     .finally(() => {
       formLoading.value = false
     })
