@@ -111,7 +111,7 @@ const onHandleAdd = () => {
   itemId.value = ''
   isOpenDialog.value = true
 }
-const handleMultiDel = () => {
+const onHandleMultiDel = () => {
   ElMessageBox.confirm('确定删除所选数据吗?')
     .then(() => {
       http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
@@ -142,7 +142,7 @@ const operations = computed(() => {
       type: 'danger',
       disabled: multiDelBtnDisable.value,
       text: '批量删除',
-      click: handleMultiDel
+      click: onHandleMultiDel
     }
   ]
 })
