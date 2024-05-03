@@ -33,12 +33,12 @@
 </template>
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import http from '@/utils/request.js'
+import http from '@/utils/http.js'
 import { validateID } from '@/utils/validate.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
-const props = defineProps(['formId'])
-const emit = defineEmits(['onLoad', 'closeDialog'])
+const props = defineProps(['itemId'])
+const emit = defineEmits(['queryTableData', 'closeDialog'])
 const title = ref('新增')
 const formRef = ref()
 const form = reactive({
@@ -50,32 +50,36 @@ const form = reactive({
   email: ''
 })
 const isEdit = computed(() => {
-  return !!props.formId
+  return !!props.itemId
 })
 const formLoading = ref(false)
 
 onMounted(() => {
-  if (props.formId) {
+  if (props.itemId) {
     title.value = '编辑'
-    getFormItems()
+    getDetails()
   } else {
     title.value = '新增'
   }
 })
 
-// 获取form详情
-const getFormItems = async () => {
-  // formLoading.value = true
-  await http.get(`/api/v1/personnel/${props.formId}`).then((res) => {
-    const { name, sex, age, IDNo, avatar, email } = res.data
-    formLoading.value = false
-    form.name = name
-    form.sex = sex
-    form.age = age
-    form.IDNo = IDNo
-    form.avatar = avatar
-    form.email = email
-  })
+// 获取详情
+const getDetails = async () => {
+  formLoading.value = true
+  await http
+    .get(`/api/v1/personnel/${props.itemId}`)
+    .then((res) => {
+      const { name, sex, age, IDNo, avatar, email } = res.data
+      form.name = name
+      form.sex = sex
+      form.age = age
+      form.IDNo = IDNo
+      form.avatar = avatar
+      form.email = email
+    })
+    .finally(() => {
+      formLoading.value = false
+    })
 }
 
 const rules = reactive({
@@ -115,24 +119,20 @@ const submitForm = () => {
 
 //新增保存
 const addSave = () => {
-  // formLoading.value = true
-  http.post('/api/v1/personnel/add', form).then((res) => {
-    formLoading.value = false
-    if (res.data.status == '200') {
-      // resetForm(formRef.value) //重置表单
+  formLoading.value = true
+  http
+    .post('/api/v1/personnel/add', form)
+    .then((res) => {
       emit('closeDialog')
       ElMessage({
         message: '新增成功',
         type: 'success'
       })
-      emit('onLoad')
-    } else {
-      ElMessage({
-        message: '新增失败',
-        type: 'error'
-      })
-    }
-  })
+      emit('queryTableData')
+    })
+    .finally(() => {
+      formLoading.value = false
+    })
 }
 
 // 编辑保存
@@ -146,7 +146,7 @@ const editSave = () => {
     avatar: form.avatar,
     email: form.email
   }
-  http.put(`/api/v1/personnel/${props.formId}`, editData).then((res) => {
+  http.put(`/api/v1/personnel/${props.itemId}`, editData).then((res) => {
     formLoading.value = false
     if (res.data.status == '200') {
       // resetForm(formRef.value) //重置表单
@@ -155,7 +155,7 @@ const editSave = () => {
         message: '编辑成功',
         type: 'success'
       })
-      emit('onLoad')
+      emit('queryTableData')
     } else {
       ElMessage({
         message: '编辑失败',
@@ -164,13 +164,8 @@ const editSave = () => {
     }
   })
 }
-// const resetForm = () => {
-//   if (!formRef.value) return
-//   formRef.value.resetFields()
-// }
-//点击取消
+// 点击取消
 const cancel = () => {
-  // resetForm() //重置表单
   emit('closeDialog')
 }
 const handleClose = (done) => {

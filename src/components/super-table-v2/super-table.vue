@@ -9,9 +9,9 @@
             </template>
           </template>
         </div>
-        <Filters :filters="filters" @handle-filter="handleFilter" @search-change="searchChange"> </Filters>
+        <Filters :filters="filters" @handle-filter="handleFilter" @filter-change="filterChange"> </Filters>
       </div>
-      <TableContent :columns="columns" :data="data" :loading="loading"></TableContent>
+      <TableContent :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
     </div>
     <el-pagination
       class="table_pagination"
@@ -33,17 +33,17 @@ import Filters from './filters.vue'
 const props = defineProps({
   filters: { type: Object },
   columns: { type: Array },
-  data: { type: Array },
+  tableData: { type: Array },
   page: { type: Object },
   operations: {},
   loading: {}
 })
-const emit = defineEmits(['onLoad', 'searchChange', 'handleFilter', 'currentChange', 'sizeChange'])
+const emit = defineEmits(['filterChange', 'handleFilter', 'currentChange', 'sizeChange'])
 const handleFilter = () => {
   emit('handleFilter')
 }
-const searchChange = (value, columnProp) => {
-  emit('searchChange', value, columnProp)
+const filterChange = (value, columnProp) => {
+  emit('filterChange', value, columnProp)
 }
 
 const sizeChange = (val) => {
@@ -55,8 +55,8 @@ const currentChange = (val) => {
 </script>
 <style lang="scss">
 .super-table-v2 {
-  height: 100%;
-  padding: 30px;
+  flex: 1;
+  padding: 10px 30px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

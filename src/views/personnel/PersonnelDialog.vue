@@ -33,7 +33,7 @@
 </template>
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import http from '@/utils/request.js'
+import http from '@/utils/http.js'
 import { validateID } from '@/utils/validate.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 const props = defineProps(['formId'])

@@ -70,7 +70,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import PersonnelDialog from './PersonnelDialog.vue'
-import http from '@/utils/request.js'
+import http from '@/utils/http.js'
 import { Plus, Delete, Edit } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 const query = reactive({

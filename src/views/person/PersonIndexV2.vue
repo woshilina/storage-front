@@ -1,32 +1,28 @@
 <template>
-  {{ userStore.userInfo.username }}<el-button @click="goOut">退出</el-button>
-  <SuperTableV2
+  <SuperTable
     :operations="operations"
     :filters="filters"
     :columns="columns"
-    :data="data"
+    :tableData="tableData"
     :page="page"
     :loading="loading"
-    @handle-filter="handleFilter"
-    @search-change="searchChange"
-    @on-load="onLoad"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
+    @handle-filter="onHandleFilter"
+    @filter-change="onFilterChange"
+    @size-change="onSizeChange"
+    @current-change="onCurrentChange"
   >
-  </SuperTableV2>
-  <PersonDialog v-if="isOpenDialog" :form-id="formId" @on-load="onLoad" @close-dialog="closeDialog"></PersonDialog>
+  </SuperTable>
+  <PersonDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></PersonDialog>
 </template>
 <script lang="jsx" setup>
-import SuperTableV2 from '@/components/super-table-v2/super-table-v2.vue'
+import SuperTable from '@/components/super-table-v2/super-table.vue'
 import PersonDialog from './PersonDialog.vue'
-import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
-import { ref, reactive, onMounted, unref, withModifiers, computed } from 'vue'
+import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
-import http from '@/utils/request.js'
-import { useSuperTable } from '@/utils/super-table-v2'
+import http from '@/utils/http.js'
+import { useSuperTable } from '@/utils/super-table'
 const url = '/api/v1/personnel/all'
 const shortcuts = [
   {
@@ -57,7 +53,6 @@ const shortcuts = [
     }
   }
 ]
-
 const filters = ref([
   {
     label: '姓名',
@@ -84,73 +79,49 @@ const filters = ref([
     width: 250,
     value: '',
     rules: [{ validator: checkAge, trigger: 'blur' }]
+  },
+  {
+    label: '日期范围',
+    prop: 'dateRange',
+    type: 'daterange',
+    width: 350,
+    value: '',
+    shortcuts: shortcuts
   }
-  // {
-  //   label: '日期',
-  //   prop: 'date',
-  //   type: 'date',
-  //   width: 200,
-  //   value: ''
-  // },
-  // {
-  //   label: '日期范围',
-  //   prop: 'dateRange',
-  //   type: 'daterange',
-  //   width: 350,
-  //   value: '',
-  //   shortcuts: shortcuts
-  // }
 ])
-
+// 过滤参数
 const filterParams = computed(() => {
-  const queryParams = {}
-  filters.value.forEach((item) => {
-    if (item.value !== '') {
-      if (item.prop == 'age') {
-        queryParams.fromAge = item.value[0]
-        queryParams.toAge = item.value[1]
-      } else {
-        queryParams[item.prop] = item.value
-      }
-    }
-  })
-  return queryParams
+  return {
+    name: filters.value[0].value,
+    sex: filters.value[1].value,
+    startAge: filters.value[2].value.length == 2 ? filters.value[2].value[0] : null,
+    endAge: filters.value[2].value.length == 2 ? filters.value[2].value[1] : null,
+    startDate: filters.value[3].value.length == 2 ? filters.value[3].value[0] : null,
+    endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
+  }
 })
-const { data, page, loading, onLoad, handleFilter, handleSizeChange, handleCurrentChange } = useSuperTable(url, filterParams)
-const userStore = useUserStore()
-const router = useRouter()
-const formId = ref('')
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange } = useSuperTable(url, filterParams)
+const itemId = ref('')
 const isOpenDialog = ref(false)
 const deleteIds = ref([])
 const onHandleAdd = () => {
-  formId.value = ''
+  itemId.value = ''
   isOpenDialog.value = true
 }
 const handleMultiDel = () => {
-  if (deleteIds.value.length == 0) {
-    ElMessage.error('请选择要删除的数据')
-  } else {
-    ElMessageBox.confirm('确定删除所选数据吗?')
-      .then(() => {
-        http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
-          if (res.data.status == '200') {
-            ElMessage({
-              message: '删除成功',
-              type: 'success'
-            })
-            onLoad()
-          } else {
-            ElMessage({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
+  ElMessageBox.confirm('确定删除所选数据吗?')
+    .then(() => {
+      http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
+        ElMessage({
+          message: '删除成功',
+          type: 'success'
         })
+        onQueryTableData()
       })
-      .catch(() => {
-        // catch error
-      })
-  }
+    })
+    .catch(() => {
+      // catch error
+    })
 }
 
 const multiDelBtnDisable = computed(() => {
@@ -195,9 +166,9 @@ const columns = [
       return <SelectionCell value={rowData.checked} onChange={onChange} />
     },
     headerCellRenderer: () => {
-      const _data = unref(data)
+      const _data = unref(tableData)
       const onChange = (value) => {
-        data.value = _data.map((row) => {
+        tableData.value = _data.map((row) => {
           row.checked = value
           return row
         })
@@ -210,8 +181,10 @@ const columns = [
           deleteIds.value = []
         }
       }
-      const allSelected = _data.every((row) => row.checked)
-      const containsChecked = _data.some((row) => row.checked)
+      // const allSelected = _data.every((row) => row.checked)
+      const allSelected = _data.length === deleteIds.value.length
+      // const containsChecked = _data.some((row) => row.checked)
+      const containsChecked = deleteIds.value.length > 0
       return <SelectionCell value={allSelected} intermediate={containsChecked && !allSelected} onChange={onChange} />
     }
   },
@@ -289,7 +262,7 @@ const columns = [
   }
 ]
 
-const searchChange = (value, columnProp) => {
+const onFilterChange = (value, columnProp) => {
   for (let item of filters.value) {
     if (item.prop == columnProp) {
       item.value = value
@@ -300,7 +273,7 @@ const searchChange = (value, columnProp) => {
 
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
-  formId.value = row.id
+  itemId.value = row.id
 }
 const closeDialog = () => {
   isOpenDialog.value = false
@@ -310,28 +283,16 @@ const rowDel = (index, row) => {
   ElMessageBox.confirm('确定删除此行数据吗?')
     .then(() => {
       http.delete(`/api/v1/personnel/multi`, { data: { ids: [row.id] } }).then((res) => {
-        if (res.data.status == '200') {
-          ElMessage({
-            message: '删除成功',
-            type: 'success'
-          })
-          onLoad()
-        } else {
-          ElMessage({
-            message: '删除失败',
-            type: 'error'
-          })
-        }
+        ElMessage({
+          message: '删除成功',
+          type: 'success'
+        })
+        onQueryTableData()
       })
     })
     .catch(() => {
       // catch error
     })
-}
-const goOut = () => {
-  userStore.clearUserInfo()
-  // 跳转到登录页面
-  router.push('/login')
 }
 </script>
 <style lang="scss"></style>

@@ -12,7 +12,7 @@
 </template>
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import http from '@/utils/request.js'
+import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import PersonDialog from './PersonDialog.vue'
 const formId = ref('')

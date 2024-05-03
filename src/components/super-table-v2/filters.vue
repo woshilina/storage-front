@@ -3,17 +3,17 @@
     <template v-for="filter in filters" :key="filter.prop">
       <div :style="{ width: filter.width + 'px' }">
         <el-form-item :label="filter.label" :prop="filter.prop">
-          <el-input v-if="filter.type == 'input'" :model-value="filter.value" @input.native="(value) => searchChange(value, filter.prop)" :placeholder="filter.label" clearable />
-          <el-select v-else-if="filter.type == 'select'" :model-value="filter.value" @change="(value) => searchChange(value, filter.prop)" :placeholder="filter.label" clearable>
+          <el-input v-if="filter.type == 'input'" :model-value="filter.value" @input.native="(value) => filterChange(value, filter.prop)" :placeholder="filter.label" clearable />
+          <el-select v-else-if="filter.type == 'select'" :model-value="filter.value" @change="(value) => filterChange(value, filter.prop)" :placeholder="filter.label" clearable>
             <el-option v-for="dic in filter.dicData" :key="dic.value" :label="dic.label" :value="dic.value" />
           </el-select>
-          <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => searchChange(value, filter.prop)">
+          <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => filterChange(value, filter.prop)">
             <el-radio v-for="dic in filter.dicData" :key="dic.value" :value="dic.value">{{ dic.label }}</el-radio>
           </el-radio-group>
           <div v-else-if="filter.type == 'agerange'" class="age-range-picker">
             <el-input-number
               :model-value="filter.value[0]"
-              @input.native="(value) => searchChange([value, filter.value[1]], filter.prop)"
+              @input.native="(value) => filterChange([value, filter.value[1]], filter.prop)"
               :min="0"
               :max="100"
               :controls="false"
@@ -22,18 +22,18 @@
             <div class="inputrange_line">-</div>
             <el-input-number
               :model-value="filter.value[1]"
-              @input.native="(value) => searchChange([filter.value[0], value], filter.prop)"
+              @input.native="(value) => filterChange([filter.value[0], value], filter.prop)"
               :min="1"
               :max="100"
               :controls="false"
               placeholder="最大年龄"
             />
           </div>
-          <el-date-picker v-else-if="filter.type == 'date'" :model-value="filter.value" @update:modelValue="(value) => searchChange(value, filter.prop)" type="date" placeholder="Pick a day" />
+          <el-date-picker v-else-if="filter.type == 'date'" :model-value="filter.value" @update:modelValue="(value) => filterChange(value, filter.prop)" type="date" placeholder="Pick a day" />
           <el-date-picker
             v-else-if="filter.type == 'daterange'"
             :model-value="filter.value"
-            @update:modelValue="(value) => searchChange(value, filter.prop)"
+            @update:modelValue="(value) => filterChange(value, filter.prop)"
             type="daterange"
             unlink-panels
             range-separator="To"
@@ -54,7 +54,7 @@
 import { ref, reactive, computed } from 'vue'
 const queryRef = ref()
 const props = defineProps(['filters'])
-const emit = defineEmits(['handleFilter', 'searchChange'])
+const emit = defineEmits(['handleFilter', 'filterChange'])
 const initForm = reactive({})
 const filterForm = computed(() => {
   props.filters.forEach((col) => {
@@ -71,8 +71,8 @@ const searchRules = computed(() => {
   })
   return rules
 })
-const searchChange = (value, columnProp) => {
-  emit('searchChange', value, columnProp)
+const filterChange = (value, columnProp) => {
+  emit('filterChange', value, columnProp)
 }
 const onQuery = () => {
   if (!queryRef.value) return
@@ -86,7 +86,7 @@ const onQuery = () => {
 }
 const onEmpty = () => {
   props.filters.forEach((item) => {
-    emit('searchChange', '', item.prop)
+    emit('filterChange', '', item.prop)
   })
   emit('handleFilter')
 }

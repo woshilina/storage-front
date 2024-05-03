@@ -1,8 +1,8 @@
-import { ref, onMounted, reactive, toValue, watchEffect, computed } from 'vue'
-import http from '@/utils/request.js'
+import { ref, onMounted, toValue } from 'vue'
+import http from '@/utils/http.js'
 
 export function useSuperTable(url, filterParams) {
-  const data = ref([])
+  const tableData = ref([])
   const page = ref({
     total: 0,
     currentPage: 1,
@@ -10,14 +10,13 @@ export function useSuperTable(url, filterParams) {
   })
 
   const loading = ref(false)
-  const onLoad = () => {
+  const onQueryTableData = () => {
     loading.value = true
-    console.log(filterParams.value)
     const params = { currentPage: page.value.currentPage, pageSize: page.value.pageSize, ...toValue(filterParams) }
     http
       .get(url, { params })
       .then((res) => {
-        data.value = res.data.data
+        tableData.value = res.data.data
         page.value.total = res.data.total
       })
       .catch(() => {})
@@ -27,19 +26,19 @@ export function useSuperTable(url, filterParams) {
   }
 
   onMounted(() => {
-    onLoad()
+    onQueryTableData()
   })
-  const handleFilter = () => {
+  const onHandleFilter = () => {
     page.value.currentPage = 1
-    onLoad()
+    onQueryTableData()
   }
-  const handleSizeChange = (val) => {
+  const onSizeChange = (val) => {
     page.value.pageSize = val
-    onLoad()
+    onQueryTableData()
   }
-  const handleCurrentChange = (val) => {
+  const onCurrentChange = (val) => {
     page.value.currentPage = val
-    onLoad()
+    onQueryTableData()
   }
-  return { data, page, loading, onLoad, handleFilter, handleSizeChange, handleCurrentChange }
+  return { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange }
 }

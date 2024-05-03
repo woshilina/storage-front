@@ -26,7 +26,7 @@
   </div>
 </template>
 <script setup>
-import http from '@/utils/request.js'
+import http from '@/utils/http.js'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ref, reactive } from 'vue'
