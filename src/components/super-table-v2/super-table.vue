@@ -1,24 +1,23 @@
 <template>
-  <div class="super-table-v2">
-    <div>
-      <div class="header">
-        <div class="header-operations">
-          <template v-if="operations && operations.length > 0">
-            <template v-for="operation in operations">
-              <el-button :type="operation.type" :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{ operation.text }}</el-button>
-            </template>
+  <div ref="superTable2" class="super-table-v2">
+    <div ref="header" class="header">
+      <div class="header-operations">
+        <template v-if="operations && operations.length > 0">
+          <template v-for="operation in operations">
+            <el-button :type="operation.type" :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{ operation.text }}</el-button>
           </template>
-        </div>
-        <Filters :filters="filters" @handle-filter="handleFilter" @filter-value-change="filterValueChange"> </Filters>
+        </template>
       </div>
-      <TableContent :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
+      <Filters :filters="filters" @handle-filter="handleFilter" @filter-value-change="filterValueChange"> </Filters>
     </div>
+    <TableContent :height="height" :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination
+      ref="tablePagination"
       class="table_pagination"
       background
       :current-page="page.currentPage"
       :page-size="page.pageSize"
-      :page-sizes="[10, 20, 50, 100]"
+      :page-sizes="pageSizes"
       layout="total, sizes, prev, pager, next, jumper"
       :total="page.total"
       @size-change="sizeChange"
@@ -27,6 +26,7 @@
   </div>
 </template>
 <script setup>
+import { ref, onMounted } from 'vue'
 import TableContent from './table-content.vue'
 import { ElButton } from 'element-plus'
 import Filters from './filters.vue'
@@ -37,6 +37,15 @@ const props = defineProps({
   page: { type: Object },
   operations: { type: Array },
   loading: { type: Boolean }
+})
+const pageSizes = props.page.pageSizes ? props.page.pageSizes : [10, 20, 30, 50]
+// 设置 table 高度撑开页面
+const superTable2 = ref()
+const header = ref()
+const tablePagination = ref()
+const height = ref(0)
+onMounted(() => {
+  height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
 })
 const emit = defineEmits(['filterValueChange', 'handleFilter', 'currentChange', 'sizeChange'])
 const handleFilter = () => {
@@ -56,10 +65,7 @@ const currentChange = (val) => {
 <style lang="scss">
 .super-table-v2 {
   flex: 1;
-  padding: 10px 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  margin: 10px 30px 20px 30px;
   .header {
     display: flex;
     justify-content: space-between;
@@ -68,7 +74,7 @@ const currentChange = (val) => {
     }
   }
   .table_pagination {
-    margin: 20px;
+    margin-top: 20px;
     justify-content: right;
   }
 }

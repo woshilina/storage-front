@@ -1,5 +1,5 @@
 <template>
-  <el-form class="filter-form-v2" ref="queryRef" :model="filterForm" :rules="searchRules">
+  <el-form class="filter-form-v2" ref="queryRef" :model="filterForm" :rules="filterRules">
     <template v-for="filter in filters" :key="filter.prop">
       <div :style="{ width: filter.width + 'px' }">
         <el-form-item :label="filter.label" :prop="filter.prop">
@@ -46,23 +46,23 @@
     </template>
     <div class="filter-btn">
       <el-button type="primary" @click="onQuery">查询</el-button>
-      <el-button @click="onEmpty">清空</el-button>
+      <el-button @click="onClear">清空</el-button>
     </div>
   </el-form>
 </template>
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 const queryRef = ref()
 const props = defineProps(['filters'])
 const emit = defineEmits(['handleFilter', 'filterValueChange'])
-const initForm = reactive({})
 const filterForm = computed(() => {
+  const initForm = {}
   props.filters.forEach((col) => {
     initForm[col.prop] = col.value
   })
   return initForm
 })
-const searchRules = computed(() => {
+const filterRules = computed(() => {
   const rules = {}
   props.filters.forEach((col) => {
     if (col.rules && col.rules.length > 0) {
@@ -84,7 +84,7 @@ const onQuery = () => {
     }
   })
 }
-const onEmpty = () => {
+const onClear = () => {
   props.filters.forEach((item) => {
     emit('filterValueChange', '', item.prop)
   })

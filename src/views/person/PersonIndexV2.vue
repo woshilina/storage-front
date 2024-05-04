@@ -19,11 +19,11 @@ import SuperTable from '@/components/super-table-v2/super-table.vue'
 import PersonDialog from './PersonDialog.vue'
 import { ref, unref, withModifiers, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import { ElMessageBox, ElMessage, ElButton } from 'element-plus'
+import { ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
-import http from '@/utils/http.js'
-import { useSuperTable } from '@/utils/super-table'
-const url = '/api/v1/personnel/all'
+ import { useSuperTable } from '@/utils/super-table'
+const getTableDataUrl = '/api/v1/personnel/all'
+const deleteDataUrl = '/api/v1/personnel/multi'
 const shortcuts = [
   {
     text: 'Last week',
@@ -100,29 +100,12 @@ const filterParams = computed(() => {
     endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange } = useSuperTable(url, filterParams)
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(getTableDataUrl, filterParams, deleteDataUrl)
 const itemId = ref('')
 const isOpenDialog = ref(false)
-const deleteIds = ref([])
-onMounted(() => {
-  onQueryTableData()
-})
 const onHandleAdd = () => {
   itemId.value = ''
   isOpenDialog.value = true
-}
-const onHandleMultiDel = () => {
-  ElMessageBox.confirm('确定删除所选数据吗?')
-    .then(() => {
-      http.delete(`/api/v1/personnel/multi`, { data: { ids: deleteIds.value } }).then((res) => {
-        ElMessage({
-          message: '删除成功',
-          type: 'success'
-        })
-        onQueryTableData()
-      })
-    })
-    .catch(() => {})
 }
 
 const multiDelBtnDisable = computed(() => {
@@ -278,22 +261,6 @@ const onHandleEdit = (index, row) => {
 }
 const closeDialog = () => {
   isOpenDialog.value = false
-}
-// 点击行删除
-const rowDel = (index, row) => {
-  ElMessageBox.confirm('确定删除此行数据吗?')
-    .then(() => {
-      http.delete(`/api/v1/personnel/multi`, { data: { ids: [row.id] } }).then((res) => {
-        ElMessage({
-          message: '删除成功',
-          type: 'success'
-        })
-        onQueryTableData()
-      })
-    })
-    .catch(() => {
-      // catch error
-    })
 }
 </script>
 <style lang="scss"></style>
