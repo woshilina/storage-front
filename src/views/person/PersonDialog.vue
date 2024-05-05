@@ -77,7 +77,6 @@ const getDetails = async () => {
       form.avatar = avatar
       form.email = email
     })
-    .catch(() => {})
     .finally(() => {
       formLoading.value = false
     })
@@ -123,7 +122,7 @@ const addSave = () => {
   formLoading.value = true
   http
     .post('/api/v1/personnel/add', form)
-    .then((res) => {
+    .then(() => {
       emit('closeDialog')
       ElMessage({
         message: '新增成功',
@@ -131,7 +130,6 @@ const addSave = () => {
       })
       emit('queryTableData')
     })
-    .catch(() => {})
     .finally(() => {
       formLoading.value = false
     })
@@ -140,7 +138,7 @@ const addSave = () => {
 // 编辑保存
 const editSave = () => {
   formLoading.value = true
-  const editData = {
+  const params = {
     name: form.name,
     age: form.age,
     sex: form.sex,
@@ -149,8 +147,8 @@ const editSave = () => {
     email: form.email
   }
   http
-    .put(`/api/v1/personnel/${props.itemId}`, editData)
-    .then((res) => {
+    .put(`/api/v1/personnel/${props.itemId}`, params)
+    .then(() => {
       emit('closeDialog')
       ElMessage({
         message: '编辑成功',
@@ -158,7 +156,6 @@ const editSave = () => {
       })
       emit('queryTableData')
     })
-    .catch(() => {})
     .finally(() => {
       formLoading.value = false
     })
@@ -168,16 +165,12 @@ const cancel = () => {
   emit('closeDialog')
 }
 const handleClose = (done) => {
-  ElMessageBox.confirm('确定关闭对话框吗?')
-    .then(() => {
-      formRef.value.resetFields()
-      formLoading.value = false
-      emit('closeDialog')
-      done()
-    })
-    .catch(() => {
-      // catch error
-    })
+  ElMessageBox.confirm('确定关闭对话框吗?').then(() => {
+    formRef.value.resetFields()
+    formLoading.value = false
+    emit('closeDialog')
+    done()
+  })
 }
 </script>
 <style lang="scss"></style>

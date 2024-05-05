@@ -39,7 +39,7 @@
             range-separator="To"
             start-placeholder="Start date"
             end-placeholder="End date"
-            :shortcuts="filter.shortcuts"
+            :shortcuts="filter.shortcuts ? filter.shortcuts : defaultShortcuts"
           />
         </el-form-item>
       </div>
@@ -54,7 +54,36 @@
 import { ref, computed } from 'vue'
 const queryRef = ref()
 const props = defineProps(['filters'])
-const emit = defineEmits(['handleFilter', 'filterValueChange'])
+const emit = defineEmits(['onHandleFilter', 'filterValueChange'])
+const defaultShortcuts = [
+  {
+    text: 'Last week',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+      return [start, end]
+    }
+  },
+  {
+    text: 'Last month',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+      return [start, end]
+    }
+  },
+  {
+    text: 'Last 3 months',
+    value: () => {
+      const end = new Date()
+      const start = new Date()
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+      return [start, end]
+    }
+  }
+]
 const filterForm = computed(() => {
   const initForm = {}
   props.filters.forEach((col) => {
@@ -78,7 +107,7 @@ const onQuery = () => {
   if (!queryRef.value) return
   queryRef.value.validate((valid, fields) => {
     if (valid) {
-      emit('handleFilter')
+      emit('onHandleFilter')
     } else {
       console.log('error submit!', fields)
     }
@@ -88,7 +117,7 @@ const onClear = () => {
   props.filters.forEach((item) => {
     emit('filterValueChange', '', item.prop)
   })
-  emit('handleFilter')
+  emit('onHandleFilter')
 }
 </script>
 <style lang="scss">

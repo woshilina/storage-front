@@ -1,14 +1,8 @@
 <template>
   <div ref="superTable2" class="super-table-v2">
     <div ref="header" class="header">
-      <div class="header-operations">
-        <template v-if="operations && operations.length > 0">
-          <template v-for="operation in operations">
-            <el-button :type="operation.type" :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{ operation.text }}</el-button>
-          </template>
-        </template>
-      </div>
-      <Filters :filters="filters" @handle-filter="handleFilter" @filter-value-change="filterValueChange"> </Filters>
+      <Operations :operations="operations"></Operations>
+      <Filters :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
     </div>
     <TableContent :height="height" :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination
@@ -29,6 +23,7 @@
 import { ref, onMounted } from 'vue'
 import TableContent from './table-content.vue'
 import { ElButton } from 'element-plus'
+import Operations from './operations.vue'
 import Filters from './filters.vue'
 const props = defineProps({
   filters: { type: Object },
@@ -47,9 +42,9 @@ const height = ref(0)
 onMounted(() => {
   height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
 })
-const emit = defineEmits(['filterValueChange', 'handleFilter', 'currentChange', 'sizeChange'])
-const handleFilter = () => {
-  emit('handleFilter')
+const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange'])
+const onHandleFilter = () => {
+  emit('onHandleFilter')
 }
 const filterValueChange = (value, columnProp) => {
   emit('filterValueChange', value, columnProp)
@@ -69,9 +64,6 @@ const currentChange = (val) => {
   .header {
     display: flex;
     justify-content: space-between;
-    .header-operations {
-      flex-shrink: 0;
-    }
   }
   .table_pagination {
     margin-top: 20px;

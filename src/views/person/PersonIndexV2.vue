@@ -6,7 +6,7 @@
     :tableData="tableData"
     :page="page"
     :loading="loading"
-    @handle-filter="onHandleFilter"
+    @on-handle-filter="onHandleFilter"
     @filter-value-change="onFilterValueChange"
     @size-change="onSizeChange"
     @current-change="onCurrentChange"
@@ -21,38 +21,9 @@ import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
-import { useSuperTable } from '@/utils/super-table'
+import { useSuperTable } from '@/components/super-table-v2/super-table'
 const getTableDataUrl = '/api/v1/personnel/all'
 const deleteDataUrl = '/api/v1/personnel/multi'
-const shortcuts = [
-  {
-    text: 'Last week',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-      return [start, end]
-    }
-  },
-  {
-    text: 'Last month',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-      return [start, end]
-    }
-  },
-  {
-    text: 'Last 3 months',
-    value: () => {
-      const end = new Date()
-      const start = new Date()
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-      return [start, end]
-    }
-  }
-]
 const filters = ref([
   {
     label: '姓名',
@@ -85,8 +56,7 @@ const filters = ref([
     prop: 'dateRange',
     type: 'daterange',
     width: 350,
-    value: '',
-    shortcuts: shortcuts
+    value: ''
   }
 ])
 // 过滤参数
