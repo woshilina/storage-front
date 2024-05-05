@@ -17,11 +17,11 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import PersonDialog from './PersonDialog.vue'
-import { ref, unref, withModifiers, computed, onMounted } from 'vue'
+import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
- import { useSuperTable } from '@/utils/super-table'
+import { useSuperTable } from '@/utils/super-table'
 const getTableDataUrl = '/api/v1/personnel/all'
 const deleteDataUrl = '/api/v1/personnel/multi'
 const shortcuts = [

@@ -10,7 +10,6 @@ export function useSuperTable(getTableDataUrl, filterParams, deleteDataUrl) {
     pageSize: 10,
     pageSizes: [10, 20, 50]
   })
-
   const loading = ref(false)
   const onQueryTableData = () => {
     loading.value = true
@@ -57,7 +56,7 @@ export function useSuperTable(getTableDataUrl, filterParams, deleteDataUrl) {
       })
       .catch(() => {})
   }
-  // 点击行删除
+  //  点击行删除
   const rowDel = (index, row) => {
     ElMessageBox.confirm('确定删除此行数据吗?')
       .then(() => {

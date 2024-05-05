@@ -139,7 +139,7 @@ const addSave = () => {
 
 // 编辑保存
 const editSave = () => {
-  // formLoading.value = true
+  formLoading.value = true
   const editData = {
     name: form.name,
     age: form.age,
@@ -148,23 +148,20 @@ const editSave = () => {
     avatar: form.avatar,
     email: form.email
   }
-  http.put(`/api/v1/personnel/${props.itemId}`, editData).then((res) => {
-    formLoading.value = false
-    if (res.data.status == '200') {
-      // resetForm(formRef.value) //重置表单
+  http
+    .put(`/api/v1/personnel/${props.itemId}`, editData)
+    .then((res) => {
       emit('closeDialog')
       ElMessage({
         message: '编辑成功',
         type: 'success'
       })
       emit('queryTableData')
-    } else {
-      ElMessage({
-        message: '编辑失败',
-        type: 'error'
-      })
-    }
-  })
+    })
+    .catch(() => {})
+    .finally(() => {
+      formLoading.value = false
+    })
 }
 // 点击取消
 const cancel = () => {
