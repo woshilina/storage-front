@@ -22,7 +22,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import TableContent from './table-content.vue'
-import { ElButton } from 'element-plus'
 import Operations from './operations.vue'
 import Filters from './filters.vue'
 const props = defineProps({
@@ -37,7 +36,6 @@ const pageSizes = props.page.pageSizes ? props.page.pageSizes : [10, 20, 30, 50]
 // 设置 table 高度撑开页面
 const superTable2 = ref()
 const header = ref()
-const tablePagination = ref()
 const height = ref(0)
 onMounted(() => {
   height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
