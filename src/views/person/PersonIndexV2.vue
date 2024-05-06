@@ -22,8 +22,7 @@ import { Plus } from '@element-plus/icons-vue'
 import { ElButton } from 'element-plus'
 import { checkAge } from '@/utils/validate.js'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
-const getTableDataUrl = '/api/v1/personnel/all'
-const deleteDataUrl = '/api/v1/personnel/multi'
+const url = '/api/v1/personnel'
 const filters = ref([
   {
     label: '姓名',
@@ -70,7 +69,7 @@ const filterParams = computed(() => {
     endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(getTableDataUrl, filterParams, deleteDataUrl)
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {

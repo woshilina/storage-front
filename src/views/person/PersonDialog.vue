@@ -121,7 +121,7 @@ const submitForm = () => {
 const addSave = () => {
   formLoading.value = true
   http
-    .post('/api/v1/personnel/add', form)
+    .post('/api/v1/personnel', form)
     .then(() => {
       emit('closeDialog')
       ElMessage({
