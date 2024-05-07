@@ -57,8 +57,8 @@ const currentChange = (val) => {
 </script>
 <style lang="scss">
 .super-table-v2 {
+  height: 100%;
   flex: 1;
-  margin: 10px 30px 20px 30px;
   .header {
     display: flex;
     justify-content: space-between;

@@ -6,8 +6,8 @@
       </div>
       <div class="login_right">
         <div class="login-logo">
-          <img class="login-icon" src="@/assets/images/logo.svg" alt="" />
-          <h2 class="logo-text">Geeker-Admin</h2>
+          <!-- <img class="login-icon" src="@/assets/images/logo.svg" alt="" /> -->
+          <h2 class="logo-text">Welcome</h2>
         </div>
         <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="rules" size="large" class="demo-ruleForm">
           <el-form-item prop="username">
@@ -119,7 +119,7 @@ const resetForm = (formEl) => {
       }
     }
     .login_right {
-      width: 500px;
+      width: 520px;
       padding: 50px 40px 45px;
       background-color: #fff;
       border-radius: 10px;
