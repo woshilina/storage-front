@@ -1,8 +1,8 @@
 <template>
   <div ref="superTable2" class="super-table-v2">
     <div ref="header" class="header">
-      <Operations :operations="operations"></Operations>
-      <Filters :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
+      <Operations v-if="operations&&operations.length > 0" :operations="operations"></Operations>
+      <Filters v-if="filters&&filters.length > 0" :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
     </div>
     <TableContent :height="height" :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination

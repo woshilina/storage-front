@@ -1,12 +1,12 @@
 <template>
-  <el-menu default-active="/personv2" router class="el-menu-vertical-demo" background-color="transport" text-color="#fff" :collapse="isCollapse">
+  <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" background-color="transport" text-color="#fff" :collapse="isCollapse">
     <el-menu-item index="/personv2">
       <el-icon><icon-menu /></el-icon>
       <template #title>人员管理</template>
     </el-menu-item>
-    <el-menu-item index="/personv1">
+    <el-menu-item index="/menu">
       <el-icon><document /></el-icon>
-      <template #title>Navigator Three</template>
+      <template #title>菜单管理</template>
     </el-menu-item>
   </el-menu>
 </template>
@@ -18,6 +18,7 @@ import {
   Location,
   Setting,
 } from '@element-plus/icons-vue'
+import { useRoute } from 'vue-router';
 const isCollapse = ref(false)
 </script>
 <style lang="scss"></style>

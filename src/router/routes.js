@@ -14,9 +14,9 @@ export const constRoutes = [
         name: 'personv2'
       },
       {
-        path: '/personv1',
-        component: () => import('@/views/person/PersonIndex.vue'),
-        name: 'personv1'
+        path: '/menu',
+        component: () => import('@/views/menu/index.vue'),
+        name: 'menu'
       }
     ]
   },
