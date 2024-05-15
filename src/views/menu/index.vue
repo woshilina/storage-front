@@ -101,6 +101,14 @@ const columns = [
     align: 'center'
   },
   {
+    key: 'parentId',
+    title: '上级菜单',
+    dataKey: 'parentId',
+    width: 150,
+    flexGrow: 1,
+    align: 'center'
+  },
+  {
     key: 'url',
     title: '路由',
     dataKey: 'url',

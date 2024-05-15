@@ -4,6 +4,12 @@
       <el-form-item label="名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入名称" />
       </el-form-item>
+      <el-form-item label="上级菜单" prop="parentId">
+        <!-- <el-tree-select v-model="form.parentId" :data="menuStore.menus" check-strictly :render-after-expand="false" style="width: 240px" /> -->
+        <el-select v-model="form.parentId" placeholder="请选择上级菜单">
+          <el-option v-for="menu in menuStore.menus" :key="menu.id" :label="menu.name" :value="menu.id" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="路由" prop="url">
         <el-input v-model.number="form.url" placeholder="请输入路由" />
       </el-form-item>
@@ -32,8 +38,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import http from '@/utils/http.js'
+import { useMenuStore } from '@/stores/menu'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
+const menuStore = useMenuStore()
+// const treeData=computed(()=>{
+//   menuStore.menus.
+// })
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
 const title = ref('新增')
