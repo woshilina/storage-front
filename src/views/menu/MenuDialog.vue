@@ -51,6 +51,7 @@ const title = ref('新增')
 const formRef = ref()
 const form = reactive({
   name: '',
+  parentId: '',
   type: '',
   url: '',
   icon: '',
@@ -74,9 +75,10 @@ onMounted(() => {
 const getDetails = async () => {
   formLoading.value = true
   await http
-    .get(`/api/v1/menu/${props.itemId}`)
+    .get(`/api/v1/menus/${props.itemId}`)
     .then((res) => {
-      const { name, url, type, icon, orderNum } = res.data
+      const { parentId, name, url, type, icon, orderNum } = res.data
+      form.parentId = parentId
       form.name = name
       form.url = url
       form.type = type
@@ -127,7 +129,7 @@ const submitForm = () => {
 const addSave = () => {
   formLoading.value = true
   http
-    .post('/api/v1/menu', form)
+    .post('/api/v1/menus', form)
     .then(() => {
       emit('closeDialog')
       ElMessage({
@@ -145,6 +147,7 @@ const addSave = () => {
 const editSave = () => {
   formLoading.value = true
   const params = {
+    parentId: form.parentId,
     name: form.name,
     url: form.url,
     type: form.type,
@@ -152,7 +155,7 @@ const editSave = () => {
     orderNum: form.orderNum
   }
   http
-    .put(`/api/v1/menu/${props.itemId}`, params)
+    .put(`/api/v1/menus/${props.itemId}`, params)
     .then(() => {
       emit('closeDialog')
       ElMessage({

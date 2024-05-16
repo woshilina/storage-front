@@ -2,7 +2,10 @@
   <div class="home">
     <el-container>
       <el-aside width="200px">
-        <Menus></Menus>
+        <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" background-color="transport" text-color="#fff" :collapse="isCollapse">
+          <MenuItem :menus="menuStore.menus"></MenuItem>
+          <!-- <MenuItem></MenuItem> -->
+        </el-menu>
       </el-aside>
       <el-container>
         <el-header>
@@ -14,11 +17,18 @@
   </div>
 </template>
 <script setup>
+import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useMenuStore } from '@/stores/menu'
 import { useRouter } from 'vue-router'
-import Menus from './menus.vue'
+import MenuItem from './MenuItem.vue'
 const userStore = useUserStore()
 const router = useRouter()
+const isCollapse = ref(false)
+const menuStore = useMenuStore()
+onMounted(() => {
+  menuStore.setMenus()
+})
 const goOut = () => {
   userStore.clearUserInfo()
   // 跳转到登录页面
@@ -35,8 +45,7 @@ const goOut = () => {
     background-color: #fff;
     color: #606266;
     border-bottom: 1px solid #e4e7ed;
-    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.09)
- 
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.09);
   }
   .el-aside {
     background: rgb(25, 26, 35);

@@ -1,16 +1,5 @@
 <template>
-  <SuperTable
-    :operations="operations"
-    :columns="columns"
-    :tableData="tableData"
-    :page="page"
-    :loading="loading"
-    @on-handle-filter="onHandleFilter"
-    @filter-value-change="onFilterValueChange"
-    @size-change="onSizeChange"
-    @current-change="onCurrentChange"
-  >
-  </SuperTable>
+  <SuperTable :operations="operations" :columns="columns" :tableData="tableData" :page="page" :loading="loading" @size-change="onSizeChange" @current-change="onCurrentChange"> </SuperTable>
   <MenuDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></MenuDialog>
 </template>
 <script lang="jsx" setup>
@@ -19,8 +8,8 @@ import MenuDialog from './MenuDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
-const url = '/api/v1/menu'
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, {})
+const url = '/api/v1/menus'
+const { tableData, page, loading, onQueryTableData, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, {})
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {
@@ -159,15 +148,6 @@ const columns = [
     align: 'center'
   }
 ]
-
-const onFilterValueChange = (value, columnProp) => {
-  for (let item of filters.value) {
-    if (item.prop == columnProp) {
-      item.value = value
-      break
-    }
-  }
-}
 
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true
