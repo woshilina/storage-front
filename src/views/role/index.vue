@@ -1,16 +1,42 @@
 <template>
-  <SuperTable :operations="operations" :columns="columns" :tableData="tableData" :expand-column-key="expandColumnKey" :loading="loading"> </SuperTable>
-  <MenuDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></MenuDialog>
+  <SuperTable
+    :operations="operations"
+    :filters="filters"
+    :columns="columns"
+    :tableData="tableData"
+    :page="page"
+    :loading="loading"
+    @on-handle-filter="onHandleFilter"
+    @filter-value-change="onFilterValueChange"
+    @size-change="onSizeChange"
+    @current-change="onCurrentChange"
+  >
+  </SuperTable>
+  <RoleDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></RoleDialog>
 </template>
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
-import MenuDialog from './MenuDialog.vue'
+import RoleDialog from './RoleDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
-import { useSuperTreeTable } from '@/components/super-table-v2/super-tree-table'
-const expandColumnKey = 'name'
-const url = '/api/v1/menus'
-const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {})
+import { useSuperTable } from '@/components/super-table-v2/super-table'
+const url = '/api/v1/roles'
+const filters = ref([
+  {
+    label: '角色名',
+    prop: 'name',
+    type: 'input',
+    width: 200,
+    value: ''
+  }
+])
+// 过滤参数
+const filterParams = computed(() => {
+  return {
+    name: filters.value[0].value
+  }
+})
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {
@@ -84,53 +110,20 @@ const columns = [
   },
   {
     key: 'name',
-    title: '名称',
+    title: '角色名',
     dataKey: 'name',
     width: 150,
     flexGrow: 1,
-    align: 'left'
+    align: 'center'
   },
   {
-    key: 'parentName',
-    title: '上级菜单',
-    dataKey: 'parentName',
-    width: 150,
-    flexGrow: 1
-    // align: 'center'
-  },
-  {
-    key: 'url',
-    title: '路由',
-    dataKey: 'url',
-    width: 150,
-    flexGrow: 1
-    // align: 'center'
-  },
-  {
-    key: 'type',
-    title: '类型',
-    dataKey: 'type',
-    width: 100,
-    flexGrow: 1,
-    align: 'center',
-    dicData: [
-      { label: '目录', value: '0' },
-      { label: '菜单', value: '1' },
-      { label: '按钮', value: '2' }
-    ],
-    cellRenderer: ({ cellData: sex, column: column }) => {
-      for (let dic of column.dicData) {
-        if (dic.value == sex) return dic.label
-      }
-    }
-  },
-  {
-    key: 'orderNum',
-    title: '排序',
-    dataKey: 'orderNum',
+    key: 'remark',
+    title: '备注',
+    dataKey: 'remark',
     width: 200,
     align: 'center'
   },
+
   {
     key: 'operations',
     title: '操作',
@@ -149,6 +142,15 @@ const columns = [
     align: 'center'
   }
 ]
+
+const onFilterValueChange = (value, columnProp) => {
+  for (let item of filters.value) {
+    if (item.prop == columnProp) {
+      item.value = value
+      break
+    }
+  }
+}
 
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true

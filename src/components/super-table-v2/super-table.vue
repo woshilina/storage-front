@@ -1,13 +1,14 @@
 <template>
   <div ref="superTable2" class="super-table-v2">
     <div ref="header" class="header">
-      <Operations v-if="operations&&operations.length > 0" :operations="operations"></Operations>
-      <Filters v-if="filters&&filters.length > 0" :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
+      <Operations v-if="operations && operations.length > 0" :operations="operations"></Operations>
+      <Filters v-if="filters && filters.length > 0" :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
     </div>
-    <TableContent :height="height" :columns="columns" :tableData="tableData" :loading="loading"></TableContent>
+    <TableContent :height="height" :columns="columns" :expand-column-key="expandColumnKey" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination
       ref="tablePagination"
       class="table_pagination"
+      v-if="page"
       background
       :current-page="page.currentPage"
       :page-size="page.pageSize"
@@ -30,9 +31,10 @@ const props = defineProps({
   tableData: { type: Array },
   page: { type: Object },
   operations: { type: Array },
-  loading: { type: Boolean }
+  loading: { type: Boolean },
+  expandColumnKey: { type: String }
 })
-const pageSizes = props.page.pageSizes ? props.page.pageSizes : [10, 20, 30, 50]
+const pageSizes = props.page && props.page.pageSizes ? props.page.pageSizes : [10, 20, 30, 50]
 // 设置 table 高度撑开页面
 const superTable2 = ref()
 const header = ref()

@@ -7,7 +7,7 @@ export const useMenuStore = defineStore(
   () => {
     const menus = ref([])
     const setMenus = async () => {
-      await http.get('/api/v1/menus/menu').then((res) => {
+      await http.get('/api/v1/menus?type=0,1').then((res) => {
         menus.value = res.data
       })
     }

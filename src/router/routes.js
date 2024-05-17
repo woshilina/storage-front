@@ -17,6 +17,11 @@ export const constRoutes = [
         path: '/menu',
         component: () => import('@/views/menu/index.vue'),
         name: 'menu'
+      },
+      {
+        path: '/role',
+        component: () => import('@/views/role/index.vue'),
+        name: 'role'
       }
     ]
   },
