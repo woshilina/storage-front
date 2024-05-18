@@ -39,6 +39,8 @@ const filterParams = computed(() => {
 const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
+const isOpenPermDialog = ref(false)
+
 const onHandleAdd = () => {
   itemId.value = ''
   isOpenDialog.value = true
@@ -129,7 +131,7 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="primary" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
         <ElButton size="small" type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
@@ -137,7 +139,7 @@ const columns = [
         </ElButton>
       </div>
     ),
-    width: 150,
+    width: 250,
     flexGrow: 1,
     align: 'center'
   }

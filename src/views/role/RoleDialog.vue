@@ -1,27 +1,14 @@
 <template>
   <CustomDialog :title="title" :width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" v-loading="formLoading" element-loading-background="rgba(255,255,255,0.6)">
-      <el-form-item label="名称" prop="name">
+      <el-form-item label="角色名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入名称" />
       </el-form-item>
-      <el-form-item label="上级菜单" prop="parentId">
-        <el-tree-select v-model="form.parentId" :data="treeData" check-strictly :render-after-expand="false" />
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model.number="form.remark" placeholder="请输入备注" />
       </el-form-item>
-      <el-form-item label="路由" prop="url">
-        <el-input v-model.number="form.url" placeholder="请输入路由" />
-      </el-form-item>
-      <el-form-item label="类型" prop="type">
-        <el-select v-model="form.type" placeholder="请选择类型">
-          <el-option label="目录" value="0" />
-          <el-option label="菜单" value="1" />
-          <el-option label="按钮" value="2" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="排序" prop="orderNum">
-        <el-input-number v-model="form.orderNum" :min="1" :max="100" placeholder="请输入排序" />
-      </el-form-item>
-      <el-form-item label="图标" prop="icon">
-        <el-input v-model="form.icon" placeholder="请选择图标" />
+      <el-form-item label="菜单权限" prop="menuIds">
+        <el-tree ref="treeRef" style="max-width: 600px" show-checkbox :data="data" :props="defaultProps" @check="handleCheck" node-key="id" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -35,36 +22,40 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import http from '@/utils/http.js'
-import { useMenuStore } from '@/stores/menu'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
-const menuStore = useMenuStore()
-const customTreeData = (arr) =>
-  arr.map((item) => ({
-    ...item,
-    label: item.name,
-    value: item.id,
-    children: item.children ? customTreeData(item.children) : []
-  }))
 
-const treeData = customTreeData(menuStore.menus)
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
 const title = ref('新增')
 const formRef = ref()
 const form = reactive({
   name: '',
-  parentId: '',
-  type: '',
-  url: '',
-  icon: '',
-  orderNum: 1
+  remark: '',
+  menuIds: []
 })
+const defaultProps = {
+  children: 'children',
+  label: 'name'
+}
+const data = ref([])
+const treeRef = ref()
+const setAllMenus = async () => {
+  await http.get('/api/v1/menus').then((res) => {
+    data.value = res.data
+  })
+}
+
+const handleCheck = (data, obj) => {
+  form.menuIds = obj.checkedKeys
+  formRef.value.validateField('menuIds')
+}
 const isEdit = computed(() => {
   return !!props.itemId
 })
 const formLoading = ref(false)
 onMounted(() => {
+  setAllMenus()
   if (props.itemId) {
     title.value = '编辑'
     getDetails()
@@ -77,15 +68,13 @@ onMounted(() => {
 const getDetails = async () => {
   formLoading.value = true
   await http
-    .get(`/api/v1/menus/${props.itemId}`)
+    .get(`/api/v1/roles/${props.itemId}`)
     .then((res) => {
-      const { parentId, name, url, type, icon, orderNum } = res.data
-      form.parentId = parentId
+      const { name, remark, menuIds } = res.data
       form.name = name
-      form.url = url
-      form.type = type
-      form.icon = icon
-      form.orderNum = orderNum
+      form.remark = remark
+      form.menuIds = menuIds
+      treeRef.value.setCheckedKeys(menuIds, false)
     })
     .finally(() => {
       formLoading.value = false
@@ -94,21 +83,10 @@ const getDetails = async () => {
 
 const rules = reactive({
   name: [
-    { required: true, message: '请输入名称', trigger: 'blur' },
+    { required: true, message: '请输入角色名称', trigger: 'blur' },
     { min: 2, max: 8, message: '长度 2-8 个', trigger: 'blur' }
   ],
-  url: [{ required: true, message: '请输入路由', trigger: 'blur' }],
-  type: [
-    {
-      required: true,
-      message: '请选择类型',
-      trigger: 'change'
-    }
-  ],
-  orderNum: [
-    { required: true, message: '请输入排序', trigger: 'blur' },
-    { type: 'number', message: '排序必须是一个数字' }
-  ]
+  menuIds: [{ required: true, message: '请选择菜单权限', trigger: 'change' }]
 })
 
 // 提交
@@ -131,7 +109,7 @@ const submitForm = () => {
 const addSave = () => {
   formLoading.value = true
   http
-    .post('/api/v1/menus', form)
+    .post('/api/v1/roles', form)
     .then(() => {
       emit('closeDialog')
       ElMessage({
@@ -149,15 +127,12 @@ const addSave = () => {
 const editSave = () => {
   formLoading.value = true
   const params = {
-    parentId: form.parentId,
     name: form.name,
-    url: form.url,
-    type: form.type,
-    icon: form.icon,
-    orderNum: form.orderNum
+    remark: form.remark,
+    menuIds: form.menuIds
   }
   http
-    .put(`/api/v1/menus/${props.itemId}`, params)
+    .put(`/api/v1/roles/${props.itemId}`, params)
     .then(() => {
       emit('closeDialog')
       ElMessage({

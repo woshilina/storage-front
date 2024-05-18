@@ -17,3 +17,19 @@ export const useMenuStore = defineStore(
     persist: true
   }
 )
+
+export const useAllMenuStore = defineStore(
+  'allMenu',
+  () => {
+    const allMenus = ref([])
+    const setAllMenus = async () => {
+      await http.get('/api/v1/menus').then((res) => {
+        allMenus.value = res.data
+      })
+    }
+    return { allMenus, setAllMenus }
+  },
+  {
+    persist: true
+  }
+)
