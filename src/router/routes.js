@@ -14,14 +14,19 @@ export const constRoutes = [
         name: 'personv2'
       },
       {
-        path: '/menu',
-        component: () => import('@/views/menu/index.vue'),
-        name: 'menu'
+        path: '/permission',
+        component: () => import('@/views/permission/index.vue'),
+        name: 'permission'
       },
       {
         path: '/role',
         component: () => import('@/views/role/index.vue'),
         name: 'role'
+      },
+      {
+        path: '/user',
+        component: () => import('@/views/user/index.vue'),
+        name: 'user'
       }
     ]
   },

@@ -7,7 +7,7 @@ export const useMenuStore = defineStore(
   () => {
     const menus = ref([])
     const setMenus = async () => {
-      await http.get('/api/v1/menus?type=0,1').then((res) => {
+      await http.get('/api/v1/permissions?type=0,1').then((res) => {
         menus.value = res.data
       })
     }
@@ -18,16 +18,16 @@ export const useMenuStore = defineStore(
   }
 )
 
-export const useAllMenuStore = defineStore(
-  'allMenu',
+export const usePermissionStore = defineStore(
+  'permissions',
   () => {
-    const allMenus = ref([])
-    const setAllMenus = async () => {
-      await http.get('/api/v1/menus').then((res) => {
-        allMenus.value = res.data
+    const permissions = ref([])
+    const setPermissions = async () => {
+      await http.get('/api/v1/permissions').then((res) => {
+        permissions.value = res.data
       })
     }
-    return { allMenus, setAllMenus }
+    return { permissions, setPermissions }
   },
   {
     persist: true

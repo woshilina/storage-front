@@ -5,9 +5,9 @@
         <el-input v-model="form.name" placeholder="请输入名称" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model.number="form.remark" placeholder="请输入备注" />
+        <el-input v-model="form.remark" placeholder="请输入备注" />
       </el-form-item>
-      <el-form-item label="菜单权限" prop="menuIds">
+      <el-form-item label="菜单权限" prop="permissionIds">
         <el-tree ref="treeRef" style="max-width: 600px" show-checkbox :data="data" :props="defaultProps" @check="handleCheck" node-key="id" />
       </el-form-item>
     </el-form>
@@ -23,8 +23,9 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { usePermissionStore } from '@/stores/permission'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
-
+const permissionStore = usePermissionStore()
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
 const title = ref('新增')
@@ -32,30 +33,26 @@ const formRef = ref()
 const form = reactive({
   name: '',
   remark: '',
-  menuIds: []
+  permissionIds: []
 })
 const defaultProps = {
   children: 'children',
   label: 'name'
 }
-const data = ref([])
+const data = computed(() => {
+  return permissionStore.permissions
+})
 const treeRef = ref()
-const setAllMenus = async () => {
-  await http.get('/api/v1/menus').then((res) => {
-    data.value = res.data
-  })
-}
 
 const handleCheck = (data, obj) => {
-  form.menuIds = obj.checkedKeys
-  formRef.value.validateField('menuIds')
+  form.permissionIds = obj.checkedKeys
+  formRef.value.validateField('permissionIds')
 }
 const isEdit = computed(() => {
   return !!props.itemId
 })
 const formLoading = ref(false)
 onMounted(() => {
-  setAllMenus()
   if (props.itemId) {
     title.value = '编辑'
     getDetails()
@@ -70,11 +67,11 @@ const getDetails = async () => {
   await http
     .get(`/api/v1/roles/${props.itemId}`)
     .then((res) => {
-      const { name, remark, menuIds } = res.data
+      const { name, remark, permissionIds } = res.data
       form.name = name
       form.remark = remark
-      form.menuIds = menuIds
-      treeRef.value.setCheckedKeys(menuIds, false)
+      form.permissionIds = permissionIds
+      treeRef.value.setCheckedKeys(permissionIds, false)
     })
     .finally(() => {
       formLoading.value = false
@@ -86,7 +83,7 @@ const rules = reactive({
     { required: true, message: '请输入角色名称', trigger: 'blur' },
     { min: 2, max: 8, message: '长度 2-8 个', trigger: 'blur' }
   ],
-  menuIds: [{ required: true, message: '请选择菜单权限', trigger: 'change' }]
+  permissionIds: [{ required: true, message: '请选择菜单权限', trigger: 'change' }]
 })
 
 // 提交
@@ -129,7 +126,7 @@ const editSave = () => {
   const params = {
     name: form.name,
     remark: form.remark,
-    menuIds: form.menuIds
+    permissionIds: form.permissionIds
   }
   http
     .put(`/api/v1/roles/${props.itemId}`, params)

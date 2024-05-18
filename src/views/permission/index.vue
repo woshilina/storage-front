@@ -1,15 +1,15 @@
 <template>
   <SuperTable :operations="operations" :columns="columns" :tableData="tableData" :expand-column-key="expandColumnKey" :loading="loading"> </SuperTable>
-  <MenuDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></MenuDialog>
+  <PermissionDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></PermissionDialog>
 </template>
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
-import MenuDialog from './MenuDialog.vue'
+import PermissionDialog from './PermissionDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTreeTable } from '@/components/super-table-v2/super-tree-table'
 const expandColumnKey = 'name'
-const url = '/api/v1/menus'
+const url = '/api/v1/permissions'
 const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {})
 const itemId = ref('')
 const isOpenDialog = ref(false)
@@ -92,7 +92,7 @@ const columns = [
   },
   {
     key: 'parentName',
-    title: '上级菜单',
+    title: '上级权限',
     dataKey: 'parentName',
     width: 150,
     flexGrow: 1
@@ -102,6 +102,14 @@ const columns = [
     key: 'url',
     title: '路由',
     dataKey: 'url',
+    width: 150,
+    flexGrow: 1
+    // align: 'center'
+  },
+  {
+    key: 'code',
+    title: '编码',
+    dataKey: 'code',
     width: 150,
     flexGrow: 1
     // align: 'center'
