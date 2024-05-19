@@ -38,3 +38,28 @@ export const checkAge = (rule, value, callback) => {
     callback()
   }
 }
+export const validatePassword = (rule, value, callback) => {
+  // const passwordRE = '^(?![a-zA-Z]+$)(?!d+$)(?![^da-zA-Zs]+$).{6,12}$' //由字母、数字、特殊字符，任意2种组成，6-12位
+  const passwordRE = /^[\da-zA-Z]{6,12}$/
+  if (value) {
+    if (passwordRE.test(value)) {
+      callback()
+    } else {
+      callback(new Error('由字母或数字组成，6-12位'))
+    }
+  } else {
+    callback()
+  }
+}
+export const validateEmail = (rule, value, callback) => {
+  const emailRE = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(.[a-zA-Z0-9-]+)*.[a-zA-Z0-9]{2,6}$/
+  if (value) {
+    if (emailRE.test(value)) {
+      callback()
+    } else {
+      callback(new Error('请输入正确的邮箱'))
+    }
+  } else {
+    callback()
+  }
+}

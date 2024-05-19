@@ -10,8 +10,8 @@
           <h2 class="logo-text">Welcome</h2>
         </div>
         <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="rules" size="large" class="demo-ruleForm">
-          <el-form-item prop="username">
-            <el-input v-model="ruleForm.username" placeholder="用户名" :prefix-icon="User" />
+          <el-form-item prop="account">
+            <el-input v-model="ruleForm.account" placeholder="用户名" :prefix-icon="User" />
           </el-form-item>
           <el-form-item prop="password">
             <el-input v-model="ruleForm.password" type="password" placeholder="密码" show-password :prefix-icon="Lock" autocomplete="off" />
@@ -37,11 +37,11 @@ const route = useRoute()
 const userStore = useUserStore()
 const ruleFormRef = ref()
 const ruleForm = reactive({
-  username: '',
+  account: '',
   password: ''
 })
 const rules = reactive({
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
   password: [
     {
       required: true,
@@ -55,7 +55,7 @@ const submitForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       const loginData = {
-        username: ruleForm.username,
+        account: ruleForm.account,
         password: ruleForm.password
       }
       userStore.setUserInfo(loginData)
@@ -69,10 +69,10 @@ const registerForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       const registerData = {
-        username: ruleForm.username,
+        account: ruleForm.account,
         password: ruleForm.password
       }
-      http.post('/api/v1/user/register', registerData).then((res) => {
+      http.post('/api/v1/users', registerData).then((res) => {
         if (res.data.status == '200' || res.data.status == '201') {
           ElMessage({
             message: '注册成功,请登录',

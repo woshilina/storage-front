@@ -12,19 +12,19 @@
     @current-change="onCurrentChange"
   >
   </SuperTable>
-  <RoleDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></RoleDialog>
+  <UserDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></UserDialog>
 </template>
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
-import RoleDialog from './RoleDialog.vue'
+import UserDialog from './UserDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
-const url = '/api/v1/roles'
+const url = '/api/v1/users'
 const filters = ref([
   {
-    label: '角色名',
-    prop: 'name',
+    label: '账号',
+    prop: 'account',
     type: 'input',
     width: 200,
     value: ''
@@ -33,7 +33,7 @@ const filters = ref([
 // 过滤参数
 const filterParams = computed(() => {
   return {
-    name: filters.value[0].value
+    account: filters.value[0].value
   }
 })
 const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
@@ -110,21 +110,52 @@ const columns = [
     }
   },
   {
+    key: 'account',
+    title: '账号',
+    dataKey: 'account',
+    width: 150,
+    flexGrow: 1,
+    align: 'center'
+  },
+  // {
+  //   key: 'password',
+  //   title: '密码',
+  //   dataKey: 'password',
+  //   width: 150,
+  //   flexGrow: 1,
+  //   align: 'center'
+  // },
+  {
     key: 'name',
-    title: '角色名',
+    title: '姓名',
     dataKey: 'name',
     width: 150,
     flexGrow: 1,
     align: 'center'
   },
   {
-    key: 'remark',
-    title: '备注',
-    dataKey: 'remark',
-    width: 200,
+    key: 'email',
+    title: '邮箱',
+    dataKey: 'email',
+    width: 150,
+    flexGrow: 1,
     align: 'center'
   },
-
+  {
+    key: 'roles',
+    title: '角色',
+    dataKey: 'roles',
+    cellRenderer: ({ rowIndex, rowData }) => (
+      <div>
+        {rowData.roles.map((role) => (
+          <el-tag type="primary">{role.name}</el-tag>
+        ))}
+      </div>
+    ),
+    width: 150,
+    flexGrow: 1,
+    align: 'center'
+  },
   {
     key: 'operations',
     title: '操作',

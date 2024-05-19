@@ -16,7 +16,7 @@ export const useUserStore = defineStore(
           message: '登录成功',
           type: 'success'
         })
-        router.push('/permission')
+        router.push('/user')
       })
     }
     // 退出时清除用户信息
