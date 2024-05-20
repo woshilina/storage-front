@@ -17,9 +17,12 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import UserDialog from './UserDialog.vue'
+import http from '@/utils/http.js'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
+import { ElMessageBox, ElMessage } from 'element-plus'
+
 const url = '/api/v1/users'
 const filters = ref([
   {
@@ -167,6 +170,9 @@ const columns = [
         <ElButton size="small" type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
+        <ElButton size="small" type="warning" onClick={withModifiers(() => resetPassword(rowIndex, rowData), ['stop'])}>
+          重置密码
+        </ElButton>
       </div>
     ),
     width: 250,
@@ -174,6 +180,17 @@ const columns = [
     align: 'center'
   }
 ]
+
+const resetPassword = (index, row) => {
+  ElMessageBox.confirm('密码将被重置为’123456‘，确定吗?').then(() => {
+    http.patch(`/api/v1/users/${row.id}`).then(() => {
+      ElMessage({
+        message: '重置成功',
+        type: 'success'
+      })
+    })
+  })
+}
 
 const onFilterValueChange = (value, columnProp) => {
   for (let item of filters.value) {

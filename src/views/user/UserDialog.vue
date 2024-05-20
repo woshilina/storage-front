@@ -4,7 +4,7 @@
       <el-form-item label="账号" prop="account">
         <el-input v-model="form.account" placeholder="请输入账号" />
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item v-if="!isEdit" label="初始密码" prop="password">
         <el-input v-model="form.password" disabled placeholder="请输入密码" />
       </el-form-item>
       <el-form-item label="姓名" prop="name">

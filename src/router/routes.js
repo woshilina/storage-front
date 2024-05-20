@@ -27,6 +27,11 @@ export const constRoutes = [
         path: '/user',
         component: () => import('@/views/user/index.vue'),
         name: 'user'
+      },
+      {
+        path: '/user-infor',
+        component: () => import('@/views/userInfor/index.vue'),
+        name: 'userInfor'
       }
     ]
   },

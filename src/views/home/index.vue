@@ -9,7 +9,18 @@
       </el-aside>
       <el-container>
         <el-header>
-          <div class="userinfo">{{ userStore.userInfo.name }}<el-button class="quitBtn" type="primary" text @click="goOut">退出</el-button></div>
+          <div class="userinfo">
+            <el-button
+              link
+              @click="
+                () => {
+                  router.push('/user-infor')
+                }
+              "
+              >{{ userStore.userInfo.name }}</el-button
+            >
+            <el-button class="quitBtn" type="primary" text @click="goOut">退出</el-button>
+          </div>
         </el-header>
         <el-main> <router-view></router-view> </el-main>
       </el-container>

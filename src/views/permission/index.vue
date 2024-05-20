@@ -90,14 +90,14 @@ const columns = [
     flexGrow: 1,
     align: 'left'
   },
-  {
-    key: 'parentName',
-    title: '上级权限',
-    dataKey: 'parentName',
-    width: 150,
-    flexGrow: 1
-    // align: 'center'
-  },
+  // {
+  //   key: 'parentName',
+  //   title: '上级权限',
+  //   dataKey: 'parentName',
+  //   width: 150,
+  //   flexGrow: 1
+  //   // align: 'center'
+  // },
   {
     key: 'url',
     title: '路由',
