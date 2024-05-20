@@ -183,7 +183,7 @@ const columns = [
 
 const resetPassword = (index, row) => {
   ElMessageBox.confirm('密码将被重置为’123456‘，确定吗?').then(() => {
-    http.patch(`/api/v1/users/${row.id}`).then(() => {
+    http.patch(`/api/v1/users/${row.id}`, { newPassword: '123456' }).then(() => {
       ElMessage({
         message: '重置成功',
         type: 'success'

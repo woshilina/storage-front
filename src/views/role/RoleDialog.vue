@@ -7,7 +7,7 @@
       <el-form-item label="备注" prop="remark">
         <el-input v-model="form.remark" placeholder="请输入备注" />
       </el-form-item>
-      <el-form-item label="菜单权限" prop="permissionIds">
+      <el-form-item label="权限" prop="permissionIds">
         <el-tree ref="treeRef" style="max-width: 600px" show-checkbox :data="data" :props="defaultProps" @check="handleCheck" node-key="id" />
       </el-form-item>
     </el-form>

@@ -18,6 +18,7 @@ export const useMenuStore = defineStore(
   }
 )
 
+// 所有权限
 export const usePermissionStore = defineStore(
   'permissions',
   () => {
