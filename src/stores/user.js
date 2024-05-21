@@ -8,10 +8,16 @@ export const useUserStore = defineStore(
   'user',
   () => {
     const router = useRouter()
-    const userInfo = ref({})
+    const userInfo = ref({
+      access_token: '',
+      user: {},
+      permissions: []
+    })
     const setUserInfo = async (loginData) => {
       await http.post('/api/v1/auth/login', loginData).then((res) => {
-        userInfo.value = res.data
+        userInfo.value.access_token = res.data.access_token
+        userInfo.value.user = res.data.user
+        userInfo.value.permissions = res.data.permissions
         ElMessage({
           message: '登录成功',
           type: 'success'
@@ -19,12 +25,15 @@ export const useUserStore = defineStore(
         router.push('/user')
       })
     }
+    const getUserPermissions = () => {
+      return userInfo.value.permissions
+    }
     // 退出时清除用户信息
     const clearUserInfo = () => {
       userInfo.value = {}
     }
 
-    return { userInfo, setUserInfo, clearUserInfo }
+    return { userInfo, setUserInfo, getUserPermissions, clearUserInfo }
   },
   {
     persist: true

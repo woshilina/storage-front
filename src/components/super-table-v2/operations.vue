@@ -2,7 +2,9 @@
   <div class="header-operations">
     <template v-if="operations && operations.length > 0">
       <template v-for="operation in operations">
-        <el-button :type="operation.type" :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{ operation.text }}</el-button>
+        <el-button :type="operation.type" v-permission="operation.code ? operation.code : ''"  :icon="operation.icon" :disabled="operation.disabled" @click="operation.click">{{
+          operation.text
+        }}</el-button>
       </template>
     </template>
   </div>

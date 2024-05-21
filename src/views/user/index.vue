@@ -59,12 +59,14 @@ const operations = computed(() => {
       disabled: false,
       icon: Plus,
       text: '新增',
+      code: 'user:add',
       click: onHandleAdd
     },
     {
       type: 'danger',
       disabled: multiDelBtnDisable.value,
       text: '批量删除',
+      code: 'user:delete',
       click: onHandleMultiDel
     }
   ]
@@ -164,13 +166,13 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" type="primary" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="primary" v-permission='user:edit' onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="danger" v-permission='user:delete' onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
-        <ElButton size="small" type="warning" onClick={withModifiers(() => resetPassword(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="warning" v-permission='user:resetpass' onClick={withModifiers(() => resetPassword(rowIndex, rowData), ['stop'])}>
           重置密码
         </ElButton>
       </div>

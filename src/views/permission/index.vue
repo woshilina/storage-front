@@ -29,12 +29,14 @@ const operations = computed(() => {
       disabled: false,
       icon: Plus,
       text: '新增',
+      code: 'permission:add',
       click: onHandleAdd
     },
     {
       type: 'danger',
       disabled: multiDelBtnDisable.value,
       text: '批量删除',
+      code: 'permission:delete',
       click: onHandleMultiDel
     }
   ]
@@ -144,10 +146,10 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" v-permission='permission:edit' onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" v-permission='permission:delete'  type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
       </div>

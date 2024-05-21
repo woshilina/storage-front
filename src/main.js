@@ -12,8 +12,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from '@/App.vue'
 import SuperTable from './components/super-table/super-table.vue'
-
-// createApp(App).mount('#app')
+import Directive from './utils/directive/index.js'
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
@@ -22,6 +21,7 @@ app.component('SuperTable', SuperTable)
 app.use(ElementPlus, {
   locale: zhCn
 })
+app.use(Directive)
 app.use(router)
 app.use(pinia)
 app.mount('#app')

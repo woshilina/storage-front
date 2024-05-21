@@ -17,7 +17,7 @@
                   router.push('/user-infor')
                 }
               "
-              >{{ userStore.userInfo.name }}</el-button
+              >{{ userStore.userInfo.user.name }}</el-button
             >
             <el-button class="quitBtn" type="primary" text @click="goOut">退出</el-button>
           </div>
@@ -39,6 +39,7 @@ const isCollapse = ref(false)
 const menuStore = useMenuStore()
 const permissionStore = usePermissionStore()
 onMounted(() => {
+  console.log(userStore.userInfo)
   menuStore.setMenus()
   permissionStore.setPermissions()
 })
