@@ -3,7 +3,7 @@
     <el-container>
       <el-aside width="200px">
         <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" background-color="transport" text-color="#fff" :collapse="isCollapse">
-          <MenuItem :menus="menuStore.menus"></MenuItem>
+          <MenuItem :menus="menuTree"></MenuItem>
           <!-- <MenuItem></MenuItem> -->
         </el-menu>
       </el-aside>
@@ -17,7 +17,7 @@
                   router.push('/user-infor')
                 }
               "
-              >{{ userStore.userInfo.user.name }}</el-button
+              >{{ username }}</el-button
             >
             <el-button class="quitBtn" type="primary" text @click="goOut">退出</el-button>
           </div>
@@ -30,19 +30,15 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useMenuStore, usePermissionStore } from '@/stores/permission'
 import { useRouter } from 'vue-router'
 import MenuItem from './MenuItem.vue'
 const userStore = useUserStore()
+const username = userStore.userInfo.user ? userStore.userInfo.user.name : ''
+const menuTree = userStore.getUserMenuTree()
+console.log(menuTree)
 const router = useRouter()
 const isCollapse = ref(false)
-const menuStore = useMenuStore()
-const permissionStore = usePermissionStore()
-onMounted(() => {
-  console.log(userStore.userInfo)
-  menuStore.setMenus()
-  permissionStore.setPermissions()
-})
+
 const goOut = () => {
   userStore.clearUserInfo()
   // 跳转到登录页面

@@ -17,9 +17,14 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import RoleDialog from './RoleDialog.vue'
-import { ref, unref, withModifiers, computed } from 'vue'
+import { ref, unref, withModifiers, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
+import { usePermissionStore } from '@/stores/permission'
+const permissionStore = usePermissionStore()
+onMounted(() => {
+  permissionStore.setPermissions()
+})
 const url = '/api/v1/roles'
 const filters = ref([
   {
@@ -132,10 +137,10 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" type="primary" v-permission='role:edit' onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="primary" v-permission="role:edit" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" type="danger" v-permission='role:delete' onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="danger" v-permission="role:delete" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
       </div>
