@@ -67,11 +67,11 @@ const getDetails = async () => {
   await http
     .get(`/api/v1/roles/${props.itemId}`)
     .then((res) => {
-      const { name, remark, permissionIds } = res.data
+      const { name, remark, permissions } = res.data
       form.name = name
       form.remark = remark
-      form.permissionIds = permissionIds
-      treeRef.value.setCheckedKeys(permissionIds, false)
+      form.permissionIds = permissions.map((item) => item.id)
+      treeRef.value.setCheckedKeys(form.permissionIds, false)
     })
     .finally(() => {
       formLoading.value = false
