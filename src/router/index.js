@@ -23,31 +23,32 @@ router.beforeEach((to, from, next) => {
     })
     next('/login')
   } else {
-    if (to.name === 'Login') return next()
-    const addRoutes = userStore.getUserRoutes()
-    const arr = []
-    addRoutes.length > 0 &&
-      addRoutes.forEach((item) => {
-        if (item.url) {
-          const temp = { path: item.url, component: () => import(`@/views/${item.code}/index.vue`) }
-          arr.push(temp)
-        }
-      })
-    if (notRegisterRoute) {
-      arr.forEach((value, index) => {
-        router.addRoute('Home', value)
-      })
-      router.addRoute({
-        path: '/404',
-        component: () => import('@/views/404/index.vue'),
-        name: '404'
-      })
-      router.addRoute({ path: '/:pathMatch(.*)', redirect: '/404' })
-      next({ ...to, replace: true })
-      notRegisterRoute = false
-    } else {
-      next()
-    }
+    next()
+    // if (to.name === 'Login') return next()
+    // const addRoutes = userStore.getUserRoutes()
+    // const arr = []
+    // addRoutes.length > 0 &&
+    //   addRoutes.forEach((item) => {
+    //     if (item.url) {
+    //       const temp = { path: item.url, component: () => import(`@/views/${item.code}/index.vue`) }
+    //       arr.push(temp)
+    //     }
+    //   })
+    // if (notRegisterRoute) {
+    //   arr.forEach((value, index) => {
+    //     router.addRoute('Home', value)
+    //   })
+    //   router.addRoute({
+    //     path: '/404',
+    //     component: () => import('@/views/404/index.vue'),
+    //     name: '404'
+    //   })
+    //   router.addRoute({ path: '/:pathMatch(.*)', redirect: '/404' })
+    //   next({ ...to, replace: true })
+    //   notRegisterRoute = false
+    // } else {
+    //   next()
+    // }
   }
 })
 router.afterEach(() => {

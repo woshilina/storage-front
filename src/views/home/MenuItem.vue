@@ -10,7 +10,7 @@
       </el-sub-menu>
     </template>
     <template v-else>
-      <el-menu-item :key="menu.id" :index="menu.url">
+      <el-menu-item :key="menu.id" :index="menu.url" v-permission="menu.code">
         <el-icon><icon-menu /></el-icon>
         <template #title>{{ menu.name }}</template>
       </el-menu-item>

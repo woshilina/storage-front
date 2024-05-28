@@ -32,10 +32,9 @@ import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import MenuItem from './MenuItem.vue'
+import { menuTree } from '@/utils/menus.js'
 const userStore = useUserStore()
 const username = userStore.userInfo.user ? userStore.userInfo.user.name : ''
-const menuTree = userStore.getUserMenuTree()
-console.log(menuTree)
 const router = useRouter()
 const isCollapse = ref(false)
 
