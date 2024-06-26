@@ -49,7 +49,6 @@ const customTreeData = (arr) =>
     value: item.id,
     children: item.children ? customTreeData(item.children) : []
   }))
-
 const treeData = customTreeData(menuStore.menus)
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])

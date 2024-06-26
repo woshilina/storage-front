@@ -8,12 +8,12 @@ export const constRoutes = [
     path: '/',
     component: () => import('@/views/home/index.vue'),
     name: 'Home',
-    redirect: '/person',
+    redirect: '/goods',
     children: [
       {
-        path: 'person',
-        component: () => import('@/views/person/index.vue'),
-        name: 'person'
+        path: 'goods',
+        component: () => import('@/views/goods/index.vue'),
+        name: 'goods'
       },
       {
         path: '/permission',

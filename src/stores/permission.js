@@ -14,7 +14,7 @@ export const useMenuStore = defineStore(
     return { menus, setMenus }
   },
   {
-    persist: true
+    // persist: true
   }
 )
 
@@ -31,6 +31,6 @@ export const usePermissionStore = defineStore(
     return { permissions, setPermissions }
   },
   {
-    persist: true
+    // persist: true
   }
 )

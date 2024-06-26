@@ -14,7 +14,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import PersonDialog from './PersonDialog.vue'
+import PersonDialog from './GoodsDialog.vue'
 const formId = ref('')
 const isOpenDialog = ref(false)
 const search = reactive({})

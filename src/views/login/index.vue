@@ -18,7 +18,6 @@
           </el-form-item>
           <el-form-item class="login-btns">
             <el-button type="primary" @click="submitForm(ruleFormRef)" round :icon="UserFilled">登录</el-button>
-            <el-button type="primary" plain @click="registerForm(ruleFormRef)" round :icon="UserFilled">注册</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -26,14 +25,9 @@
   </div>
 </template>
 <script setup>
-import http from '@/utils/http.js'
-import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ref, reactive } from 'vue'
-import { User, Lock, CircleClose, UserFilled } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-const router = useRouter()
-const route = useRoute()
+import { User, Lock, UserFilled } from '@element-plus/icons-vue'
 const userStore = useUserStore()
 const ruleFormRef = ref()
 const ruleForm = reactive({
@@ -63,36 +57,6 @@ const submitForm = async (formEl) => {
       console.log('error submit!', fields)
     }
   })
-}
-const registerForm = async (formEl) => {
-  if (!formEl) return
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      const registerData = {
-        account: ruleForm.account,
-        password: ruleForm.password
-      }
-      http.post('/api/v1/users', registerData).then((res) => {
-        if (res.data.status == '200' || res.data.status == '201') {
-          ElMessage({
-            message: '注册成功,请登录',
-            type: 'success'
-          })
-        } else {
-          ElMessage({
-            message: res.data.message,
-            type: 'error'
-          })
-        }
-      })
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-const resetForm = (formEl) => {
-  if (!formEl) return
-  formEl.resetFields()
 }
 </script>
 <style lang="scss" scoped>
@@ -144,9 +108,9 @@ const resetForm = (formEl) => {
         :deep(.el-form-item__content) {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justify-content: center;
           .el-button {
-            width: 185px;
+            width: 100%;
           }
         }
       }

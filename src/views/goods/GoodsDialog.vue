@@ -1,26 +1,20 @@
 <template>
   <CustomDialog :title="title" :width="500" :before-close="handleClose">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" v-loading="formLoading" element-loading-background="rgba(255,255,255,0.6)">
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="form.name" placeholder="请输入姓名" />
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="form.name" placeholder="请输入名称" />
       </el-form-item>
-      <el-form-item label="性别" prop="sex">
-        <el-select v-model="form.sex" placeholder="请选择性别">
-          <el-option label="男" value="1" />
-          <el-option label="女" value="2" />
-        </el-select>
+      <el-form-item label="规格" prop="specification">
+        <el-input v-model="form.specification" placeholder="请输入规格" />
       </el-form-item>
-      <el-form-item label="年龄" prop="age">
-        <el-input v-model.number="form.age" placeholder="请输入年龄" />
+      <el-form-item label="数量" prop="quantity">
+        <el-input v-model.number="form.quantity" placeholder="请输入数量" />
       </el-form-item>
-      <el-form-item label="身份证号" prop="IDNo">
-        <el-input v-model="form.IDNo" placeholder="请输入身份证号" />
+      <el-form-item label="重量" prop="weight">
+        <el-input v-model="form.weight" placeholder="请输入重量" />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" placeholder="请输入邮箱" />
-      </el-form-item>
-      <el-form-item label="头像" prop="avatar">
-        <el-input v-model="form.avatar" />
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="form.remark" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -43,10 +37,10 @@ const title = ref('新增')
 const formRef = ref()
 const form = reactive({
   name: '',
-  sex: '',
-  age: '',
-  IDNo: '',
-  avatar: '',
+  specification: '',
+  quantity: '',
+  weight: '',
+  remark: '',
   email: ''
 })
 const isEdit = computed(() => {
@@ -67,15 +61,14 @@ onMounted(() => {
 const getDetails = async () => {
   formLoading.value = true
   await http
-    .get(`/api/v1/personnel/${props.itemId}`)
+    .get(`/api/v1/goods/${props.itemId}`)
     .then((res) => {
-      const { name, sex, age, IDNo, avatar, email } = res.data
+      const { name, specification, quantity, weight, remark } = res.data
       form.name = name
-      form.sex = sex
-      form.age = age
-      form.IDNo = IDNo
-      form.avatar = avatar
-      form.email = email
+      form.specification = specification
+      form.quantity = quantity
+      form.weight = weight
+      form.remark = remark
     })
     .finally(() => {
       formLoading.value = false
@@ -87,18 +80,15 @@ const rules = reactive({
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 8, message: '长度 2-8 个', trigger: 'blur' }
   ],
-  sex: [
-    {
-      required: true,
-      message: '请选择性别',
-      trigger: 'change'
-    }
+  specification: [{ required: true, message: '请输入规格' }],
+  quantity: [
+    { required: true, message: '请输入数量' },
+    { type: 'number', message: '数量应该是数字' }
   ],
-  age: [
-    { required: true, message: '请输入年龄' },
-    { type: 'number', message: '年龄应该是数字' }
-  ],
-  IDNo: [{ validator: validateID, trigger: 'blur' }]
+  weight: [
+    { required: true, message: '请输入重量' },
+    // { type: 'number', message: '重量应该是数字' }
+  ]
 })
 
 // 提交
@@ -121,7 +111,7 @@ const submitForm = () => {
 const addSave = () => {
   formLoading.value = true
   http
-    .post('/api/v1/personnel', form)
+    .post('/api/v1/goods', form)
     .then(() => {
       emit('closeDialog')
       ElMessage({
@@ -140,14 +130,13 @@ const editSave = () => {
   formLoading.value = true
   const params = {
     name: form.name,
-    age: form.age,
-    sex: form.sex,
-    IDNo: form.IDNo,
-    avatar: form.avatar,
-    email: form.email
+    specification: form.specification,
+    quantity: form.quantity,
+    weight: form.weight,
+    remark: form.remark,
   }
   http
-    .put(`/api/v1/personnel/${props.itemId}`, params)
+    .put(`/api/v1/goods/${props.itemId}`, params)
     .then(() => {
       emit('closeDialog')
       ElMessage({

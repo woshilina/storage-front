@@ -10,14 +10,14 @@
           <el-radio-group v-else-if="filter.type == 'radio'" :model-value="filter.value" @change="(value) => filterValueChange(value, filter.prop)">
             <el-radio v-for="dic in filter.dicData" :key="dic.value" :value="dic.value">{{ dic.label }}</el-radio>
           </el-radio-group>
-          <div v-else-if="filter.type == 'agerange'" class="age-range-picker">
+          <div v-else-if="filter.type == 'numberrange'" class="age-range-picker">
             <el-input-number
               :model-value="filter.value[0]"
               @input.native="(value) => filterValueChange([value, filter.value[1]], filter.prop)"
               :min="0"
               :max="100"
               :controls="false"
-              placeholder="最小年龄"
+              placeholder="最小值"
             />
             <div class="inputrange_line">-</div>
             <el-input-number
@@ -26,7 +26,7 @@
               :min="1"
               :max="100"
               :controls="false"
-              placeholder="最大年龄"
+              placeholder="最大值"
             />
           </div>
           <el-date-picker v-else-if="filter.type == 'date'" :model-value="filter.value" @update:modelValue="(value) => filterValueChange(value, filter.prop)" type="date" placeholder="Pick a day" />

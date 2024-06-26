@@ -8,6 +8,10 @@ import PermissionDialog from './PermissionDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTreeTable } from '@/components/super-table-v2/super-tree-table'
+import { useMenuStore } from '@/stores/permission'
+const menuStore = useMenuStore()
+menuStore.setMenus()
+
 const expandColumnKey = 'name'
 const url = '/api/v1/permissions'
 const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {})
@@ -146,10 +150,10 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" v-permission='permission:edit' onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" v-permission="permission:edit" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" v-permission='permission:delete'  type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" v-permission="permission:delete" type="danger" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
       </div>

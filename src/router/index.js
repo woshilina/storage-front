@@ -22,6 +22,8 @@ router.beforeEach((to, from, next) => {
       type: 'error'
     })
     next('/login')
+  } else if (token && to.name == 'Login') {
+    next('/')
   } else {
     next()
     // if (to.name === 'Login') return next()

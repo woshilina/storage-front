@@ -12,60 +12,60 @@
     @current-change="onCurrentChange"
   >
   </SuperTable>
-  <PersonDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></PersonDialog>
+  <GoodsDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></GoodsDialog>
 </template>
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
-import PersonDialog from './PersonDialog.vue'
+import GoodsDialog from './GoodsDialog.vue'
 import { ref, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { checkAge } from '@/utils/validate.js'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
-const url = '/api/v1/personnel'
+const url = '/api/v1/goods'
 const filters = ref([
   {
-    label: '姓名',
+    label: '名称',
     prop: 'name',
     type: 'input',
     width: 200,
     value: ''
   },
   {
-    label: '性别',
-    prop: 'sex',
-    type: 'select',
-    width: 160,
+    label: '规格',
+    prop: 'specification',
+    type: 'input',
+    width: 200,
     value: '',
-    dicData: [
-      { label: '男', value: '1' },
-      { label: '女', value: '2' }
-    ]
+    // dicData: [
+    //   { label: '男', value: '1' },
+    //   { label: '女', value: '2' }
+    // ]
   },
   {
-    label: '年龄',
-    prop: 'age',
-    type: 'agerange',
+    label: '数量',
+    prop: 'quantity',
+    type: 'numberrange',
     width: 250,
     value: '',
     rules: [{ validator: checkAge, trigger: 'blur' }]
   },
-  {
-    label: '日期范围',
-    prop: 'dateRange',
-    type: 'daterange',
-    width: 350,
-    value: ''
-  }
+  // {
+  //   label: '日期范围',
+  //   prop: 'dateRange',
+  //   type: 'daterange',
+  //   width: 350,
+  //   value: ''
+  // }
 ])
 // 过滤参数
 const filterParams = computed(() => {
   return {
     name: filters.value[0].value,
-    sex: filters.value[1].value,
-    startAge: filters.value[2].value.length == 2 ? filters.value[2].value[0] : null,
-    endAge: filters.value[2].value.length == 2 ? filters.value[2].value[1] : null,
-    startDate: filters.value[3].value.length == 2 ? filters.value[3].value[0] : null,
-    endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
+    specification: filters.value[1].value,
+    startQuantity: filters.value[2].value.length == 2 ? filters.value[2].value[0] : null,
+    endQuantity: filters.value[2].value.length == 2 ? filters.value[2].value[1] : null,
+    // startDate: filters.value[3].value.length == 2 ? filters.value[3].value[0] : null,
+    // endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
   }
 })
 const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
@@ -87,14 +87,14 @@ const operations = computed(() => {
       disabled: false,
       icon: Plus,
       text: '新增',
-      code: 'person:add',
+      code: 'goods:add',
       click: onHandleAdd
     },
     {
       type: 'danger',
       disabled: multiDelBtnDisable.value,
       text: '批量删除',
-      code: 'person:delete',
+      code: 'goods:delete',
       click: onHandleMultiDel
     }
   ]
@@ -144,55 +144,47 @@ const columns = [
   },
   {
     key: 'name',
-    title: '姓名',
+    title: '名称',
     dataKey: 'name',
     width: 150,
     flexGrow: 1,
     align: 'center'
   },
   {
-    key: 'age',
-    title: '年龄',
-    dataKey: 'age',
+    key: 'specification',
+    title: '规格',
+    dataKey: 'specification',
     width: 100,
     flexGrow: 1,
     align: 'center'
   },
   {
-    key: 'sex',
-    title: '性别',
-    dataKey: 'sex',
+    key: 'quantity',
+    title: '数量',
+    dataKey: 'quantity',
     width: 100,
-    align: 'center',
-    dicData: [
-      { label: '男', value: '1' },
-      { label: '女', value: '2' }
-    ],
-    cellRenderer: ({ cellData: sex, column: column }) => {
-      for (let dic of column.dicData) {
-        if (dic.value == sex) return dic.label
-      }
-    }
+    align: 'center'
+    // dicData: [
+    //   { label: '男', value: '1' },
+    //   { label: '女', value: '2' }
+    // ],
+    // cellRenderer: ({ cellData: sex, column: column }) => {
+    //   for (let dic of column.dicData) {
+    //     if (dic.value == sex) return dic.label
+    //   }
+    // }
   },
   {
-    key: 'IDNo',
-    title: '身份证号码',
-    dataKey: 'IDNo',
+    key: 'weight',
+    title: '重量',
+    dataKey: 'weight',
     width: 200,
     align: 'center'
   },
   {
-    key: 'email',
-    title: '邮箱',
-    dataKey: 'email',
-    width: 150,
-    flexGrow: 1,
-    align: 'center'
-  },
-  {
-    key: 'avatar',
-    title: '头像',
-    dataKey: 'avatar',
+    key: 'remark',
+    title: '备注',
+    dataKey: 'remark',
     width: 150,
     flexGrow: 1,
     align: 'center'
@@ -202,10 +194,10 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" v-permission="person:edit" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" v-permission="goods:edit" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" type="danger" v-permission="person:delete" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="danger" v-permission="goods:delete" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
       </div>
