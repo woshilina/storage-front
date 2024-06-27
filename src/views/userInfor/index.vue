@@ -37,13 +37,13 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import http from '@/utils/http.js'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { validatePassword, validateEmail } from '@/utils/validate'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 const userStore = useUserStore()
 const router = useRouter()
-const userId = userStore.userInfo.id
+const userId = userStore.userInfo.user.id
 const formRef = ref()
 const passwordFormRef = ref()
 const formLoading = ref(false)
