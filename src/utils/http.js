@@ -47,17 +47,11 @@ axiosInstance.interceptors.response.use(
   },
   function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
-    // 对响应错误做点什么
-    // 统一错误提示
-    // ElMessage({
-    //   message: error.response.data.message,
-    //   type: 'error'
-    // })
 
     const { data, config } = error.response
 
     // refresh_token验证失败时 清除用户信息 跳转到登录页
-    if (error.response.status == 400 && config.url.includes('/api/v1/auth/refreshtoken')) {
+    if (config.url.includes('/api/v1/auth/refreshtoken')) {
       window.localStorage.removeItem('access_token')
       window.localStorage.removeItem('refresh_token')
       const userStore = useUserStore()
@@ -83,7 +77,7 @@ axiosInstance.interceptors.response.use(
       if (!refresh_token) {
         return Promise.reject('refresh_token is empty')
       }
-      refreshToken()
+      return refreshToken()
         .then((res) => {
           // 刷新token成功
           refreshing = false
@@ -102,7 +96,11 @@ axiosInstance.interceptors.response.use(
           router.push('/login')
         })
     }
-
+    // 统一错误提示
+    ElMessage({
+      message: error.response.data.message,
+      type: 'error'
+    })
     return Promise.reject(error)
   }
 )
