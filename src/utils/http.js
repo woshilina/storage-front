@@ -55,14 +55,15 @@ axiosInstance.interceptors.response.use(
     // })
 
     const { data, config } = error.response
-    // refresh_token过期时 清楚用户信息 跳转到登录页
+
+    // refresh_token验证失败时 清除用户信息 跳转到登录页
     if (error.response.status == 400 && config.url.includes('/api/v1/auth/refreshtoken')) {
       window.localStorage.removeItem('access_token')
+      window.localStorage.removeItem('refresh_token')
       const userStore = useUserStore()
       userStore.clearUserInfo()
       router.push('/login')
     }
-
     // 如果正在刷新token，则将失败的请求挂起,
     // 存入task中等待刷新token完成在全部执行出来
     if (refreshing) {
