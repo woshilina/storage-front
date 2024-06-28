@@ -10,12 +10,11 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: constRoutes
 })
-let notRegisterRoute = true //是否动态添加过路由
+// let notRegisterRoute = true //是否动态添加过路由
 router.beforeEach((to, from, next) => {
   // NProgress.start()
   //访问需要授权的页面时，如果没有登录，则跳转到登录界面
-  const userStore = useUserStore()
-  const token = userStore.userInfo.access_token
+  const token = localStorage.getItem('access_token')
   if (!token && to.name !== 'Login') {
     ElMessage({
       message: '您还没有登录，请先登录',
