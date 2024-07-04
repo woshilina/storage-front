@@ -60,7 +60,6 @@ axiosInstance.interceptors.response.use(
     // 如果正在刷新token，则将失败的请求挂起,
     // 存入task中等待刷新token完成在全部执行出来
     if (refreshing) {
-      console.log(refreshing)
       return new Promise((resolve) => {
         task.push({
           config,
