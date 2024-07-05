@@ -30,6 +30,8 @@ export const useUserStore = defineStore(
     }
     // 退出时清除用户信息
     const clearUserInfo = () => {
+      window.localStorage.removeItem('access_token')
+      window.localStorage.removeItem('refresh_token')
       userInfo.value = {}
     }
 

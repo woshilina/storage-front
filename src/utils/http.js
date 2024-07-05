@@ -51,8 +51,8 @@ axiosInstance.interceptors.response.use(
     // refresh_token验证失败时 清除用户信息 跳转到登录页
     // 此判断要在 if(refreshing)之前  因为 refreshtoken 时 refreshing 为 true，会进入判断语句 return promise 不会向下进行
     if (config.url.includes('/api/v1/auth/refreshtoken')) {
-      window.localStorage.removeItem('access_token')
-      window.localStorage.removeItem('refresh_token')
+      // window.localStorage.removeItem('access_token')
+      // window.localStorage.removeItem('refresh_token')
       const userStore = useUserStore()
       userStore.clearUserInfo()
       router.push('/login')
