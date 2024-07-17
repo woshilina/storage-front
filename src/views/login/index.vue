@@ -98,6 +98,7 @@ const submitForm = async (formEl) => {
           height: 52px;
         }
         .logo-text {
+          color: #000;
           padding-left: 25px;
           font-size: 42px;
           font-weight: 700;
