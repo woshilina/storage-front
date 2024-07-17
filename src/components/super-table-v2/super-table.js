@@ -1,7 +1,6 @@
 import { ref, toValue, onMounted } from 'vue'
 import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
-
 export function useSuperTable(url, filterParams) {
   const tableData = ref([])
   const page = ref({
@@ -13,6 +12,9 @@ export function useSuperTable(url, filterParams) {
   const loading = ref(false)
   const onQueryTableData = () => {
     loading.value = true
+    if (page.value.currentPage > 1 && (page.value.currentPage - 1) * page.value.pageSize < page.value.total) {
+      page.value.currentPage--
+    }
     const params = { currentPage: page.value.currentPage, pageSize: page.value.pageSize, ...toValue(filterParams) }
     http
       .get(url, { params })
@@ -25,6 +27,7 @@ export function useSuperTable(url, filterParams) {
         loading.value = false
       })
   }
+
   onMounted(() => {
     onQueryTableData()
   })
@@ -40,7 +43,9 @@ export function useSuperTable(url, filterParams) {
     page.value.currentPage = val
     onQueryTableData()
   }
-
+  const onSort = () => {
+    tableData.value = tableData.value.reverse()
+  }
   //  批量删除功能
   const deleteIds = ref([])
   const onHandleMultiDel = () => {
@@ -70,5 +75,5 @@ export function useSuperTable(url, filterParams) {
       })
       .catch(() => {})
   }
-  return { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel }
+  return { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort }
 }

@@ -6,6 +6,7 @@
     :tableData="tableData"
     :page="page"
     :loading="loading"
+    @on-sort="onSort"
     @on-handle-filter="onHandleFilter"
     @filter-value-change="onFilterValueChange"
     @size-change="onSizeChange"
@@ -35,7 +36,7 @@ const filters = ref([
     prop: 'specification',
     type: 'input',
     width: 200,
-    value: '',
+    value: ''
     // dicData: [
     //   { label: '男', value: '1' },
     //   { label: '女', value: '2' }
@@ -48,7 +49,7 @@ const filters = ref([
     width: 250,
     value: '',
     rules: [{ validator: checkAge, trigger: 'blur' }]
-  },
+  }
   // {
   //   label: '日期范围',
   //   prop: 'dateRange',
@@ -63,12 +64,12 @@ const filterParams = computed(() => {
     name: filters.value[0].value,
     specification: filters.value[1].value,
     startQuantity: filters.value[2].value.length == 2 ? filters.value[2].value[0] : null,
-    endQuantity: filters.value[2].value.length == 2 ? filters.value[2].value[1] : null,
+    endQuantity: filters.value[2].value.length == 2 ? filters.value[2].value[1] : null
     // startDate: filters.value[3].value.length == 2 ? filters.value[3].value[0] : null,
     // endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {
@@ -146,6 +147,7 @@ const columns = [
     key: 'name',
     title: '名称',
     dataKey: 'name',
+    sortable: true,
     width: 150,
     flexGrow: 1,
     align: 'center'

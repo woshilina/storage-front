@@ -4,7 +4,7 @@
       <Operations v-if="operations && operations.length > 0" :operations="operations"></Operations>
       <Filters v-if="filters && filters.length > 0" :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
     </div>
-    <TableContent :height="height" :columns="columns" :expand-column-key="expandColumnKey" :tableData="tableData" :loading="loading"></TableContent>
+    <TableContent :height="height" :columns="columns" @on-sort="onSort" :expand-column-key="expandColumnKey" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination
       ref="tablePagination"
       class="table_pagination"
@@ -42,7 +42,10 @@ const height = ref(0)
 onMounted(() => {
   height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
 })
-const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange'])
+const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange', 'onSort'])
+const onSort = () => {
+  emit('onSort')
+}
 const onHandleFilter = () => {
   emit('onHandleFilter')
 }
