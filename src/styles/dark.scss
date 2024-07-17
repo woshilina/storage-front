@@ -2,9 +2,9 @@ html.dark {
   .el-header {
     background-color: var(--el-bg-color-overlay);
   }
-//   .el-aside {
-//     background-color: var(--el-bg-color-overlay);
-//   }
+  .custom-dialog .el-dialog__header {
+    background-color: var(--el-bg-color);
+  }
   .el-main {
     background-color: var(--el-bg-color);
     .main-box {
