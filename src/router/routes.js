@@ -13,7 +13,7 @@ export const constRoutes = [
     children: [
       {
         path: 'goods',
-        component: defineAsyncComponent(() => import('@/views/goods/index.vue')),
+        component: () => import('@/views/goods/index.vue'),
         name: 'goods'
       },
       {

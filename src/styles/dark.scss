@@ -1,0 +1,23 @@
+html.dark {
+  .el-header {
+    background-color: var(--el-bg-color-overlay);
+  }
+//   .el-aside {
+//     background-color: var(--el-bg-color-overlay);
+//   }
+  .el-main {
+    background-color: var(--el-bg-color);
+    .main-box {
+      background-color: var(--el-bg-color-overlay);
+    }
+    .filter-form-v2 .el-form-item .age-range-picker {
+      background-color: transparent;
+    }
+    .el-table-v2__main {
+      background-color: transparent;
+      .el-table-v2__header-cell {
+        background-color: transparent;
+      }
+    }
+  }
+}

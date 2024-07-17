@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
- // @ts-ignore
+// @ts-ignore
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import 'element-plus/dist/index.css'
 // import './style.css'
@@ -13,6 +13,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from '@/App.vue'
 import SuperTable from './components/super-table/super-table.vue'
 import Directive from './utils/directive/index.js'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)

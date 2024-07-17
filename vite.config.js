@@ -30,9 +30,10 @@ export default defineConfig(() => {
       port: 8089,
       proxy: {
         '/api': {
-          // target: 'http://127.0.0.1:3002',
-          target: 'https://storage-service-6evx.onrender.com',
-          changeOrigin: true
+          target: 'http://127.0.0.1:3002',
+          // target: 'https://storage-service-6evx.onrender.com',
+          changeOrigin: true,
+          // rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     },
