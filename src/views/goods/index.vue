@@ -18,7 +18,7 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import GoodsDialog from './GoodsDialog.vue'
-import { ref, unref, withModifiers, computed } from 'vue'
+import { ref, reactive, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { checkAge } from '@/utils/validate.js'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
@@ -69,18 +69,6 @@ const filterParams = computed(() => {
     // endDate: filters.value[3].value.length == 2 ? filters.value[3].value[1] : null
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort } = useSuperTable(url, filterParams)
-const itemId = ref('')
-const isOpenDialog = ref(false)
-const onHandleAdd = () => {
-  itemId.value = ''
-  isOpenDialog.value = true
-}
-
-const multiDelBtnDisable = computed(() => {
-  return deleteIds.value.length == 0 ? true : false
-})
-
 const operations = computed(() => {
   return [
     {
@@ -100,11 +88,6 @@ const operations = computed(() => {
     }
   ]
 })
-
-const SelectionCell = ({ value, intermediate = false, onChange }) => {
-  return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
-}
-
 const columns = [
   {
     key: 'selection',
@@ -164,6 +147,8 @@ const columns = [
     key: 'quantity',
     title: '数量',
     dataKey: 'quantity',
+    sortable: true,
+    // sortType: 'asc',
     width: 100,
     align: 'center'
     // dicData: [
@@ -209,6 +194,22 @@ const columns = [
     align: 'center'
   }
 ]
+ 
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort } = useSuperTable(url, filterParams, columns)
+const itemId = ref('')
+const isOpenDialog = ref(false)
+const onHandleAdd = () => {
+  itemId.value = ''
+  isOpenDialog.value = true
+}
+
+const multiDelBtnDisable = computed(() => {
+  return deleteIds.value.length == 0 ? true : false
+})
+
+const SelectionCell = ({ value, intermediate = false, onChange }) => {
+  return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
+}
 
 const onFilterValueChange = (value, columnProp) => {
   for (let item of filters.value) {

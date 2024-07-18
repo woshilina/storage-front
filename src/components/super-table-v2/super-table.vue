@@ -43,8 +43,8 @@ onMounted(() => {
   height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
 })
 const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange', 'onSort'])
-const onSort = () => {
-  emit('onSort')
+const onSort = (sortState) => {
+  emit('onSort', sortState)
 }
 const onHandleFilter = () => {
   emit('onHandleFilter')

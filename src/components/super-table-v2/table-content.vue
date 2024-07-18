@@ -28,7 +28,7 @@
 import { ref, computed, reactive } from 'vue'
 import { TableV2SortOrder } from 'element-plus'
 import { Loading as LoadingIcon } from '@element-plus/icons-vue'
-const props = defineProps(['tableData', 'columns', 'loading', 'height', 'expandColumnKey', 'sortState'])
+const props = defineProps(['tableData', 'columns', 'loading', 'height', 'expandColumnKey'])
 const emits = defineEmits(['onSort'])
 const sortState = computed(() => {
   const stateObj = reactive({})
@@ -42,7 +42,7 @@ const sortState = computed(() => {
 })
 const onSort = ({ key, order }) => {
   sortState.value[key] = order
-  emits('onSort')
+  emits('onSort', sortState.value)
 }
 const expandedRowKeys = ref([])
 </script>

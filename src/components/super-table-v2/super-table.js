@@ -1,7 +1,8 @@
-import { ref, toValue, onMounted } from 'vue'
+import { ref, isRef, toValue, onMounted, computed } from 'vue'
 import http from '@/utils/http.js'
+import { TableV2SortOrder } from 'element-plus'
 import { ElMessageBox, ElMessage } from 'element-plus'
-export function useSuperTable(url, filterParams) {
+export function useSuperTable(url, filterParams, columns) {
   const tableData = ref([])
   const page = ref({
     total: 0,
@@ -9,13 +10,24 @@ export function useSuperTable(url, filterParams) {
     pageSize: 10,
     pageSizes: [10, 20, 50]
   })
+  const sortState = computed(() => {
+    const stateObj = {}
+    columns.forEach((item) => {
+      if (item.sortable) {
+        const key = item.key + 'Order'
+        stateObj[key] = item.sortType ? TableV2SortOrder[item.sortType] : TableV2SortOrder.ASC
+      }
+    })
+    return stateObj
+  })
   const loading = ref(false)
-  const onQueryTableData = () => {
+  const onQueryTableData = (sort = sortState) => {
     loading.value = true
     if (page.value.currentPage > 1 && (page.value.currentPage - 1) * page.value.pageSize < page.value.total) {
       page.value.currentPage--
     }
-    const params = { currentPage: page.value.currentPage, pageSize: page.value.pageSize, ...toValue(filterParams) }
+    const querySort = isRef(sort) ? toValue(sort) : sort
+    const params = { currentPage: page.value.currentPage, pageSize: page.value.pageSize, ...toValue(filterParams), ...querySort }
     http
       .get(url, { params })
       .then((res) => {
@@ -43,8 +55,13 @@ export function useSuperTable(url, filterParams) {
     page.value.currentPage = val
     onQueryTableData()
   }
-  const onSort = () => {
-    tableData.value = tableData.value.reverse()
+  const onSort = (sortState) => {
+    const stateObj = {}
+    for (let key in sortState) {
+      const newkey = key + 'Order'
+      stateObj[newkey] = sortState[key]
+    }
+    onQueryTableData(stateObj)
   }
   //  批量删除功能
   const deleteIds = ref([])
