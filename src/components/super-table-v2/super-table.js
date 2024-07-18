@@ -11,14 +11,9 @@ export function useSuperTable(url, filterParams, columns) {
     pageSizes: [10, 20, 50]
   })
   const sortState = computed(() => {
-    const stateObj = {}
-    columns.forEach((item) => {
-      if (item.sortable) {
-        const key = item.key + 'Order'
-        stateObj[key] = item.sortType ? TableV2SortOrder[item.sortType] : TableV2SortOrder.ASC
-      }
-    })
-    return stateObj
+    const stateObj = columns.find((item) => item.sortable)
+    const order = stateObj.sortType ? TableV2SortOrder[stateObj.sortType] : TableV2SortOrder.ASC
+    return { sortBy: stateObj.key, orderBy: order.toUpperCase() }
   })
   const loading = ref(false)
   const onQueryTableData = (sort = sortState) => {
@@ -55,13 +50,8 @@ export function useSuperTable(url, filterParams, columns) {
     page.value.currentPage = val
     onQueryTableData()
   }
-  const onSort = (sortState) => {
-    const stateObj = {}
-    for (let key in sortState) {
-      const newkey = key + 'Order'
-      stateObj[newkey] = sortState[key]
-    }
-    onQueryTableData(stateObj)
+  const onSort = (key, order) => {
+    onQueryTableData({ sortBy: key, orderBy: order.toUpperCase() })
   }
   //  批量删除功能
   const deleteIds = ref([])

@@ -42,7 +42,7 @@ const sortState = computed(() => {
 })
 const onSort = ({ key, order }) => {
   sortState.value[key] = order
-  emits('onSort', sortState.value)
+  emits('onSort', key, order)
 }
 const expandedRowKeys = ref([])
 </script>
