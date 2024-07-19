@@ -18,23 +18,28 @@ export const constRoutes = [
       },
       {
         path: '/permission',
-        component: defineAsyncComponent(() => import('@/views/permission/index.vue')),
+        component: () => import('@/views/permission/index.vue'),
         name: 'permission'
       },
       {
         path: '/role',
-        component: defineAsyncComponent(() => import('@/views/role/index.vue')),
+        component: () => import('@/views/role/index.vue'),
         name: 'role'
       },
       {
         path: '/user',
-        component: defineAsyncComponent(() => import('@/views/user/index.vue')),
+        component: () => import('@/views/user/index.vue'),
         name: 'user'
       },
       {
         path: '/user-infor',
-        component: defineAsyncComponent(() => import('@/views/userInfor/index.vue')),
+        component: () => import('@/views/userInfor/index.vue'),
         name: 'userInfor'
+      },
+      {
+        path: '/about',
+        component: () => import('@/views/about/index.vue'),
+        name: 'about'
       }
     ]
   },

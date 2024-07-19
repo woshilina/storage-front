@@ -12,8 +12,12 @@ export function useSuperTable(url, filterParams, columns) {
   })
   const sortState = computed(() => {
     const stateObj = columns.find((item) => item.sortable)
-    const order = stateObj.sortType ? TableV2SortOrder[stateObj.sortType] : TableV2SortOrder.ASC
-    return { sortBy: stateObj.key, orderBy: order.toUpperCase() }
+    if (stateObj) {
+      const order = stateObj.sortType ? TableV2SortOrder[stateObj.sortType] : TableV2SortOrder.ASC
+      return { sortBy: stateObj.key, orderBy: order.toUpperCase() }
+    } else {
+      return {}
+    }
   })
   const loading = ref(false)
   const onQueryTableData = (sort = sortState) => {

@@ -39,7 +39,6 @@ const filterParams = computed(() => {
     account: filters.value[0].value
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 
@@ -166,13 +165,13 @@ const columns = [
     title: '操作',
     cellRenderer: ({ rowIndex, rowData }) => (
       <div>
-        <ElButton size="small" type="primary" v-permission='user:edit' onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="primary" v-permission="user:edit" onClick={withModifiers(() => onHandleEdit(rowIndex, rowData), ['stop'])}>
           Edit
         </ElButton>
-        <ElButton size="small" type="danger" v-permission='user:delete' onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="danger" v-permission="user:delete" onClick={withModifiers(() => rowDel(rowIndex, rowData), ['stop'])}>
           Delete
         </ElButton>
-        <ElButton size="small" type="warning" v-permission='user:resetpass' onClick={withModifiers(() => resetPassword(rowIndex, rowData), ['stop'])}>
+        <ElButton size="small" type="warning" v-permission="user:resetpass" onClick={withModifiers(() => resetPassword(rowIndex, rowData), ['stop'])}>
           重置密码
         </ElButton>
       </div>
@@ -182,6 +181,7 @@ const columns = [
     align: 'center'
   }
 ]
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams, columns)
 
 const resetPassword = (index, row) => {
   ElMessageBox.confirm('密码将被重置为’123456‘，确定吗?').then(() => {

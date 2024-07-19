@@ -14,7 +14,6 @@ menuStore.setMenus()
 
 const expandColumnKey = 'name'
 const url = '/api/v1/permissions'
-const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {})
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {
@@ -163,6 +162,7 @@ const columns = [
     align: 'center'
   }
 ]
+const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {}, columns)
 
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true

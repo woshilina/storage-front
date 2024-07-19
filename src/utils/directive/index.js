@@ -11,7 +11,7 @@ const permission = {
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {
-      el.parentNode && el.parentNode.removeChild(el)
+      // el.parentNode && el.parentNode.removeChild(el)
     }
   }
 }

@@ -2,6 +2,7 @@
   <div class="home">
     <el-container>
       <el-aside width="200px">
+        <div class="title">admin管理系统</div>
         <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" background-color="transport" text-color="#fff" :collapse="isCollapse">
           <MenuItem :menus="menuTree"></MenuItem>
           <!-- <MenuItem></MenuItem> -->
@@ -34,7 +35,7 @@
           </div>
         </el-header>
         <el-main>
-          <el-card style="height: 100%"><router-view></router-view></el-card>
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -64,8 +65,10 @@ const goOut = () => {
 <style lang="scss">
 .home {
   height: 100%;
+
   .el-container {
     height: 100%;
+
     .el-card__body {
       height: 100%;
     }
@@ -77,12 +80,20 @@ const goOut = () => {
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.09);
   }
   .el-aside {
-    background: rgb(25, 26, 35);
+    background-color: #304156;
     color: #fff;
-    padding-top: 20px;
     border-right: 1px solid transparent;
+    overflow: hidden;
+    .title {
+      text-align: center;
+      height: 59px;
+      line-height: 59px;
+      border-bottom: 1px solid #606266;
+    }
     .el-menu {
       border-right: 0;
+      height: calc(100% - 50px);
+      overflow: scroll;
     }
   }
   .userinfo {

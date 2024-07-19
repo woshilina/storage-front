@@ -1,18 +1,20 @@
 <template>
-  <SuperTable
-    :operations="operations"
-    :filters="filters"
-    :columns="columns"
-    :tableData="tableData"
-    :page="page"
-    :loading="loading"
-    @on-sort="onSort"
-    @on-handle-filter="onHandleFilter"
-    @filter-value-change="onFilterValueChange"
-    @size-change="onSizeChange"
-    @current-change="onCurrentChange"
-  >
-  </SuperTable>
+  <el-card style="height: 100%">
+    <SuperTable
+      :operations="operations"
+      :filters="filters"
+      :columns="columns"
+      :tableData="tableData"
+      :page="page"
+      :loading="loading"
+      @on-sort="onSort"
+      @on-handle-filter="onHandleFilter"
+      @filter-value-change="onFilterValueChange"
+      @size-change="onSizeChange"
+      @current-change="onCurrentChange"
+    >
+    </SuperTable>
+  </el-card>
   <GoodsDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></GoodsDialog>
 </template>
 <script lang="jsx" setup>
@@ -194,7 +196,7 @@ const columns = [
     align: 'center'
   }
 ]
- 
+
 const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort } = useSuperTable(url, filterParams, columns)
 const itemId = ref('')
 const isOpenDialog = ref(false)

@@ -41,7 +41,6 @@ const filterParams = computed(() => {
     name: filters.value[0].value
   }
 })
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 
@@ -150,7 +149,7 @@ const columns = [
     align: 'center'
   }
 ]
-
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams, columns)
 const onFilterValueChange = (value, columnProp) => {
   for (let item of filters.value) {
     if (item.prop == columnProp) {
