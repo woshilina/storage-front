@@ -9,7 +9,7 @@ export const constRoutes = [
     path: '/',
     component: () => import('@/views/home/index.vue'),
     name: 'Home',
-    redirect: '/goods',
+    redirect: '/icon-select',
     children: [
       {
         path: 'goods',
@@ -35,6 +35,16 @@ export const constRoutes = [
         path: '/user-infor',
         component: () => import('@/views/userInfor/index.vue'),
         name: 'userInfor'
+      },
+      {
+        path: '/icon-select',
+        component: () => import('@/views/iconSelect/index.vue'),
+        name: 'icon-select'
+      },
+      {
+        path: '/general-settings',
+        component: () => import('@/views/generalSettings/index.vue'),
+        name: 'general-settings'
       },
       {
         path: '/about',

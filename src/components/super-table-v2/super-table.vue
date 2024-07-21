@@ -1,8 +1,11 @@
 <template>
   <div ref="superTable2" class="super-table-v2">
     <div ref="header" class="header">
-      <Operations v-if="operations && operations.length > 0" :operations="operations"></Operations>
       <Filters v-if="filters && filters.length > 0" :filters="filters" @on-handle-filter="onHandleFilter" @filter-value-change="filterValueChange"> </Filters>
+      <div class="operation-btns">
+        <Operations v-if="operations && operations.length > 0" :operations="operations"></Operations>
+        <ColumnIshiddenTool :columns="columns" @on-handle-columns="onHandleColumns"></ColumnIshiddenTool>
+      </div>
     </div>
     <TableContent :height="height" :columns="columns" @on-sort="onSort" :expand-column-key="expandColumnKey" :tableData="tableData" :loading="loading"></TableContent>
     <el-pagination
@@ -25,6 +28,8 @@ import { ref, onMounted } from 'vue'
 import TableContent from './table-content.vue'
 import Operations from './operations.vue'
 import Filters from './filters.vue'
+import ColumnIshiddenTool from './column-ishidden-tool.vue'
+
 const props = defineProps({
   filters: { type: Object },
   columns: { type: Array },
@@ -42,7 +47,8 @@ const height = ref(0)
 onMounted(() => {
   height.value = superTable2.value.clientHeight - header.value.clientHeight - 52
 })
-const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange', 'onSort'])
+
+const emit = defineEmits(['filterValueChange', 'onHandleFilter', 'currentChange', 'sizeChange', 'onSort', 'onHandleColumns'])
 const onSort = (key, order) => {
   emit('onSort', key, order)
 }
@@ -59,12 +65,15 @@ const sizeChange = (val) => {
 const currentChange = (val) => {
   emit('currentChange', val)
 }
+const onHandleColumns = () => {
+  emit('onHandleColumns')
+}
 </script>
 <style lang="scss">
 .super-table-v2 {
   height: 100%;
   flex: 1;
-  .header {
+  .operation-btns {
     display: flex;
     justify-content: space-between;
   }

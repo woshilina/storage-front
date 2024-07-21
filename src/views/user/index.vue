@@ -7,6 +7,7 @@
     :page="page"
     :loading="loading"
     @on-handle-filter="onHandleFilter"
+    @on-handle-columns="onHandleColumns"
     @filter-value-change="onFilterValueChange"
     @size-change="onSizeChange"
     @current-change="onCurrentChange"
@@ -18,7 +19,7 @@
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import UserDialog from './UserDialog.vue'
 import http from '@/utils/http.js'
-import { ref, unref, withModifiers, computed } from 'vue'
+import { ref, unref, withModifiers, computed, reactive } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
 import { ElMessageBox, ElMessage } from 'element-plus'
@@ -75,7 +76,7 @@ const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
 
-const columns = [
+const columns = reactive([
   {
     key: 'selection',
     width: 50,
@@ -121,14 +122,6 @@ const columns = [
     flexGrow: 1,
     align: 'center'
   },
-  // {
-  //   key: 'password',
-  //   title: '密码',
-  //   dataKey: 'password',
-  //   width: 150,
-  //   flexGrow: 1,
-  //   align: 'center'
-  // },
   {
     key: 'name',
     title: '姓名',
@@ -180,8 +173,8 @@ const columns = [
     flexGrow: 1,
     align: 'center'
   }
-]
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams, columns)
+])
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onHandleColumns } = useSuperTable(url, filterParams, columns)
 
 const resetPassword = (index, row) => {
   ElMessageBox.confirm('密码将被重置为’123456‘，确定吗?').then(() => {

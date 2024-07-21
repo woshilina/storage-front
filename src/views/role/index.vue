@@ -7,6 +7,7 @@
     :page="page"
     :loading="loading"
     @on-handle-filter="onHandleFilter"
+    @on-handle-columns="onHandleColumns"
     @filter-value-change="onFilterValueChange"
     @size-change="onSizeChange"
     @current-change="onCurrentChange"
@@ -17,7 +18,7 @@
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import RoleDialog from './RoleDialog.vue'
-import { ref, unref, withModifiers, computed, onMounted } from 'vue'
+import { ref, reactive, unref, withModifiers, computed, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTable } from '@/components/super-table-v2/super-table'
 import { usePermissionStore } from '@/stores/permission'
@@ -77,7 +78,7 @@ const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
 
-const columns = [
+const columns = reactive([
   {
     key: 'selection',
     width: 50,
@@ -130,7 +131,6 @@ const columns = [
     width: 200,
     align: 'center'
   },
-
   {
     key: 'operations',
     title: '操作',
@@ -148,8 +148,8 @@ const columns = [
     flexGrow: 1,
     align: 'center'
   }
-]
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel } = useSuperTable(url, filterParams, columns)
+])
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onHandleColumns } = useSuperTable(url, filterParams, columns)
 const onFilterValueChange = (value, columnProp) => {
   for (let item of filters.value) {
     if (item.prop == columnProp) {

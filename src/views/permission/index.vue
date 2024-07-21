@@ -1,11 +1,11 @@
 <template>
-  <SuperTable :operations="operations" :columns="columns" :tableData="tableData" :expand-column-key="expandColumnKey" :loading="loading"> </SuperTable>
+  <SuperTable :operations="operations" :columns="columns" :tableData="tableData" @on-handle-columns="onHandleColumns" :expand-column-key="expandColumnKey" :loading="loading"> </SuperTable>
   <PermissionDialog v-if="isOpenDialog" :item-id="itemId" @query-table-data="onQueryTableData" @close-dialog="closeDialog"></PermissionDialog>
 </template>
 <script lang="jsx" setup>
 import SuperTable from '@/components/super-table-v2/super-table.vue'
 import PermissionDialog from './PermissionDialog.vue'
-import { ref, unref, withModifiers, computed } from 'vue'
+import { ref, reactive, unref, withModifiers, computed } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useSuperTreeTable } from '@/components/super-table-v2/super-tree-table'
 import { useMenuStore } from '@/stores/permission'
@@ -49,7 +49,7 @@ const SelectionCell = ({ value, intermediate = false, onChange }) => {
   return <ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate} />
 }
 
-const columns = [
+const columns = reactive([
   {
     key: 'selection',
     width: 50,
@@ -161,8 +161,8 @@ const columns = [
     flexGrow: 1,
     align: 'center'
   }
-]
-const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel } = useSuperTreeTable(url, {}, columns)
+])
+const { tableData, loading, onQueryTableData, deleteIds, onHandleMultiDel, rowDel, onHandleColumns } = useSuperTreeTable(url, {}, columns)
 
 const onHandleEdit = (index, row) => {
   isOpenDialog.value = true

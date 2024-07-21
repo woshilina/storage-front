@@ -1,10 +1,30 @@
 import { ref, toValue, onMounted } from 'vue'
 import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useRoute } from 'vue-router'
 
-export function useSuperTreeTable(url, filterParams) {
+export function useSuperTreeTable(url, filterParams, columns) {
   const tableData = ref([])
   const loading = ref(false)
+  const route = useRoute()
+
+  const onHandleColumns = () => {
+    const localStoreItem = route.name + '-columns'
+    const storedChecked = localStorage.getItem(localStoreItem)
+    if (storedChecked) {
+      const storedCheckedColumns = storedChecked.split(',')
+      columns.forEach((item) => {
+        if (item.name && storedCheckedColumns.includes(item.name)) {
+          item.hidden = false
+        } else if (item.key && storedCheckedColumns.includes(item.key)) {
+          item.hidden = false
+        } else {
+          item.hidden = true
+        }
+      })
+    }
+  }
+  onHandleColumns()
   const onQueryTableData = () => {
     loading.value = true
     const params = { ...toValue(filterParams) }
@@ -68,5 +88,5 @@ export function useSuperTreeTable(url, filterParams) {
         .catch(() => {})
     }
   }
-  return { tableData, loading, onQueryTableData, onHandleFilter, deleteIds, onHandleMultiDel, rowDel }
+  return { tableData, loading, onQueryTableData, onHandleFilter, deleteIds, onHandleMultiDel, rowDel, onHandleColumns }
 }

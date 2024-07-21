@@ -8,6 +8,7 @@
       :page="page"
       :loading="loading"
       @on-sort="onSort"
+      @on-handle-columns="onHandleColumns"
       @on-handle-filter="onHandleFilter"
       @filter-value-change="onFilterValueChange"
       @size-change="onSizeChange"
@@ -90,7 +91,7 @@ const operations = computed(() => {
     }
   ]
 })
-const columns = [
+const columns = reactive([
   {
     key: 'selection',
     width: 50,
@@ -142,6 +143,7 @@ const columns = [
     title: '规格',
     dataKey: 'specification',
     width: 100,
+    hidden: true,
     flexGrow: 1,
     align: 'center'
   },
@@ -195,9 +197,13 @@ const columns = [
     flexGrow: 1,
     align: 'center'
   }
-]
+])
 
-const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort } = useSuperTable(url, filterParams, columns)
+const { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort, onHandleColumns } = useSuperTable(
+  url,
+  filterParams,
+  columns
+)
 const itemId = ref('')
 const isOpenDialog = ref(false)
 const onHandleAdd = () => {

@@ -2,6 +2,8 @@ import { ref, isRef, toValue, onMounted, computed } from 'vue'
 import http from '@/utils/http.js'
 import { TableV2SortOrder } from 'element-plus'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useRoute } from 'vue-router'
+
 export function useSuperTable(url, filterParams, columns) {
   const tableData = ref([])
   const page = ref({
@@ -10,6 +12,25 @@ export function useSuperTable(url, filterParams, columns) {
     pageSize: 10,
     pageSizes: [10, 20, 50]
   })
+  const route = useRoute()
+
+  const onHandleColumns = () => {
+    const localStoreItem = route.name + '-columns'
+    const storedChecked = localStorage.getItem(localStoreItem)
+    if (storedChecked) {
+      const storedCheckedColumns = storedChecked.split(',')
+      columns.forEach((item) => {
+        if (item.name && storedCheckedColumns.includes(item.name)) {
+          item.hidden = false
+        } else if (item.key && storedCheckedColumns.includes(item.key)) {
+          item.hidden = false
+        } else {
+          item.hidden = true
+        }
+      })
+    }
+  }
+  onHandleColumns()
   const sortState = computed(() => {
     const stateObj = columns.find((item) => item.sortable)
     if (stateObj) {
@@ -86,5 +107,5 @@ export function useSuperTable(url, filterParams, columns) {
       })
       .catch(() => {})
   }
-  return { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort }
+  return { tableData, page, loading, onQueryTableData, onHandleFilter, onSizeChange, onCurrentChange, deleteIds, onHandleMultiDel, rowDel, onSort, onHandleColumns }
 }
