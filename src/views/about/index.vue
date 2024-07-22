@@ -26,8 +26,9 @@
         <li>
           基于<el-text type="success">Element Plus</el-text>的<el-text type="success">Virtualized Table</el-text> 虚拟化表格封装<el-text type="success">super-table</el-text>,根据可复用性利用 vue3
           的组合式函数封装相同逻辑，项目中的几个页面除了权限管理都是使用的<el-text type="success">super-table</el-text>组件， <el-text type="success">super-table</el-text>
-          组件可配置批量操作按钮，过滤项，列表项，分页
+          组件可配置批量操作按钮，过滤项，列表项，分页，列显隐
         </li>
+        <li>使用 <el-text type="success">vueuse</el-text>插件的<el-text type="success">useColorMode</el-text>方法实现页面模式设置：浅色模式、深色模式、跟随系统</li>
         <li>
           为了提高用户体验，使用 <el-text type="success">token</el-text> 和 <el-text type="success">refresh token</el-text>实现无感刷新，<el-text type="success">axios</el-text>
           请求拦截和相应拦截封装对应的逻辑
