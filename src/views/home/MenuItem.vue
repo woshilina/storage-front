@@ -3,7 +3,7 @@
     <template v-if="menu.children && menu.children.length > 0">
       <el-sub-menu :index="menu.url">
         <template #title>
-          <el-icon><location /></el-icon>
+          <el-icon><svg-icon :name="menu.icon"></svg-icon></el-icon>
           <span>{{ menu.name }}</span>
         </template>
         <MenuItem :menus="menu.children"></MenuItem>
@@ -11,14 +11,14 @@
     </template>
     <template v-else>
       <el-menu-item :key="menu.id" :index="menu.url" v-permission="menu.code ? menu.code : ''">
-        <el-icon><icon-menu /></el-icon>
+        <el-icon><svg-icon :name="menu.icon"></svg-icon></el-icon>
         <template #title>{{ menu.name }}</template>
       </el-menu-item>
     </template>
   </template>
 </template>
 <script setup>
-import { Document, Menu as IconMenu, Location, Setting } from '@element-plus/icons-vue'
+// import { User, Trophy, Coordinate, Box, Picture, Setting, BellFilled, Document, Menu as IconMenu, Location } from '@element-plus/icons-vue'
 defineProps(['menus'])
 </script>
 <style lang="scss"></style>
