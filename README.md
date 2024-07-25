@@ -33,7 +33,12 @@
 ![用户管理页](/src/assets/screenshot/role.png "用户管理")
 5. 商品管理页
 ![商品管理页](/src/assets/screenshot/goods.png "商品管理")
-6. 个人信息页
+6. 列显隐操作
+![列显隐操作](/src/assets/screenshot/column-control.mov "列显隐操作")
+7. 列排序
+ 默认按照名称排序，点击数量列排序按钮会按照数量列排序
+![列排序](/src/assets/screenshot/sort.mov "列排序")
+8. 个人信息页
 ![个人信息页](/src/assets/screenshot/personinfor.png "个人信息页")
 
 
