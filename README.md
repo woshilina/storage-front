@@ -6,11 +6,11 @@
 ## 项目介绍：
 1. 此项目为前端项目，搭配的后端项目是[storage-service](https://github.com/woshilina/storage-service)
 2. 此项目使用的是 vue3 框架, UI组件库用的 Element Plus，状态管理 pinia，路由管理 vue-router 4
-3. 菜单包含：用户管理、角色管理、权限管理、商品管理
+3. 菜单包含：用户管理、角色管理、权限管理、物品管理、图标下拉选、通用设置、关于
 4. 基于Element Plus的 menu 菜单采用递归方式封装左侧菜单
-5. 基于Element Plus的Virtualized Table 虚拟化表格封装super-table,利用 vue3 的组合式函数封装相同逻辑，项目中的几个页面除了权限管理都是使用的super-table， super-table 组件可配置批量操作按钮、过滤项、列表项、分页、配置列显隐、排序，其中排序功能需要后台接口，可参考商品管理页
+5. 基于Element Plus的Virtualized Table 虚拟化表格封装super-table,利用 vue3 的组合式函数封装相同逻辑，项目中的几个页面除了权限管理都是使用的super-table组件， super-table 组件可配置批量操作按钮、过滤项、列表项、分页、配置列显隐、排序，其中排序功能需要后台接口，可参考商品管理页
 6. 基于RBAC模型实现权限管理，RBAC模型具有简化权限管理、灵活的角色与权限关系、提高安全性和易于扩展等优点。中心思想是通过将权限分配给➡角色，再将角色分配给➡用户，来实现对系统资源的访问控制
-7. 为了提高用户体验，使用的 token 和 refresh token，axios 请求拦截和响应拦截封装对应的逻辑
+7. 采用 JWT 实现跨域认证，在axios 请求拦截将 token 添加到请求头Authorization，同时为了实现无感刷新提高用户体验，使用了refresh token，在 axios响应拦截封装刷新 token的逻辑
 8. 自定义指令 v-permission，用于前端权限判断，控制显隐
 9. 利用vite-plugin-svg-icons插件封装图标选择器组件ElIconSelect
 
