@@ -8,7 +8,9 @@
 2. 此项目使用的是 vue3 框架, UI组件库用的 Element Plus，状态管理 pinia，路由管理 vue-router 4
 3. 菜单包含：用户管理、角色管理、权限管理、物品管理、图标下拉选、通用设置、关于
 4. 基于Element Plus的 menu 菜单采用递归方式封装左侧菜单
-5. 基于Element Plus的Virtualized Table 虚拟化表格封装super-table,利用 vue3 的组合式函数封装相同逻辑，项目中的几个页面除了权限管理都是使用的super-table组件， super-table 组件可配置批量操作按钮、过滤项、列表项、分页、配置列显隐、排序，其中排序功能需要后台接口，可参考商品管理页
+5. 基于Element Plus的Virtualized Table 虚拟化表格封装super-table,利用 vue3 的组合式函数封装相同逻辑，项目中的几个页面除了权限管理都是使用的super-table组件， super-table 组件可配置批量操作按钮、过滤项、列表项、分页、配置列显隐、排序
+   - 自定义列设置即列显隐功能支持保存，保存后再次进入该页面会按照保存的信息展现列
+   - 自定义列排序功能需要后台接口，可参考商品管理页
 6. 基于RBAC模型实现权限管理，RBAC模型具有简化权限管理、灵活的角色与权限关系、提高安全性和易于扩展等优点。中心思想是通过将权限分配给➡角色，再将角色分配给➡用户，来实现对系统资源的访问控制
 7. 采用 JWT 实现跨域认证，在axios 请求拦截将 token 添加到请求头Authorization，同时为了实现无感刷新提高用户体验，使用了refresh token，在 axios响应拦截封装刷新 token的逻辑
 8. 自定义指令 v-permission，用于前端权限判断，控制显隐
@@ -40,7 +42,13 @@
  默认按照名称排序，点击数量列排序按钮会按照数量列排序
 ![列排序](/src/assets/screenshot/sort.jpg "列排序")
 8. 个人信息页
-![个人信息页](/src/assets/screenshot/personinfor.png "个人信息页")
+![个人信息页](/src/assets/screenshot/personInfor.png "个人信息页")
+9. 页面模式
+![浅色模式](/src/assets/screenshot/light.png "浅色模式")
+![深色模式](/src/assets/screenshot/dark.png "深色模式")
+![跟随系统](/src/assets/screenshot/system.png "跟随系统")
+
+
 
 
 
