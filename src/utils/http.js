@@ -4,7 +4,8 @@ import { useUserStore } from '@/stores/user'
 import router from '../router/index'
 //创建 axios 实例
 const axiosInstance = axios.create({
-  baseURL: 'https://storage-service-6evx.onrender.com',
+  // baseURL: 'https://storage-service-6evx.onrender.com'
+  baseURL: 'https://storage-service-305a9gdtt-linas-projects-188fd476.vercel.app'
   // baseURL: 'http://127.0.0.1:3002'
   // timeout: 500,
 })

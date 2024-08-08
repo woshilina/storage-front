@@ -9,7 +9,7 @@ export const constRoutes = [
     path: '/',
     component: () => import('@/views/home/index.vue'),
     name: 'Home',
-    redirect: '/icon-select',
+    redirect: '/goods',
     children: [
       {
         path: 'goods',
