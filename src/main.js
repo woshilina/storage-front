@@ -15,16 +15,12 @@ import SuperTable from './components/super-table/super-table.vue'
 import SvgIcon from './components/SvgIcon.vue'
 import ElIconSelect from './components/el-icon-select/index.vue'
 import Directive from './utils/directive/index.js'
-import * as ElIcons from '@element-plus/icons-vue'
 import 'virtual:svg-icons-register'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
-// app.provide('$axios', axios)
-// Object.keys(ElIcons).forEach((key) => {
-//   app.component(key, ElIcons[key])
-// })
+
 app.component('SuperTable', SuperTable)
 app.component('SvgIcon', SvgIcon)
 app.component('ElIconSelect', ElIconSelect)
