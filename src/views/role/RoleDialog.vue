@@ -25,11 +25,12 @@ import http from '@/utils/http.js'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { usePermissionStore } from '@/stores/permission'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
+import { useSuperTableDialog } from '@/components/super-table-v2/super-table-dialog'
+const url = '/api/v1/roles'
+
 const permissionStore = usePermissionStore()
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
-const title = ref('新增')
-const formRef = ref()
 const form = reactive({
   name: '',
   remark: '',
@@ -48,24 +49,12 @@ const handleCheck = (data, obj) => {
   form.permissionIds = obj.checkedKeys
   formRef.value.validateField('permissionIds')
 }
-const isEdit = computed(() => {
-  return !!props.itemId
-})
-const formLoading = ref(false)
-onMounted(() => {
-  if (props.itemId) {
-    title.value = '编辑'
-    getDetails()
-  } else {
-    title.value = '新增'
-  }
-})
 
 // 获取详情
 const getDetails = async () => {
   formLoading.value = true
   await http
-    .get(`/api/v1/roles/${props.itemId}`)
+    .get(url + `/${props.itemId}`)
     .then((res) => {
       const { name, remark, permissions } = res.data
       form.name = name
@@ -85,74 +74,6 @@ const rules = reactive({
   ],
   permissionIds: [{ required: true, message: '请选择菜单权限', trigger: 'change' }]
 })
-
-// 提交
-const submitForm = () => {
-  if (!formRef.value) return
-  formRef.value.validate((valid, fields) => {
-    if (valid) {
-      if (!isEdit.value) {
-        addSave()
-      } else {
-        editSave()
-      }
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-
-//新增保存
-const addSave = () => {
-  formLoading.value = true
-  http
-    .post('/api/v1/roles', form)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '新增成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-
-// 编辑保存
-const editSave = () => {
-  formLoading.value = true
-  const params = {
-    name: form.name,
-    remark: form.remark,
-    permissionIds: form.permissionIds
-  }
-  http
-    .put(`/api/v1/roles/${props.itemId}`, params)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '编辑成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-// 点击取消
-const cancel = () => {
-  emit('closeDialog')
-}
-const handleClose = (done) => {
-  ElMessageBox.confirm('确定关闭对话框吗?').then(() => {
-    formRef.value.resetFields()
-    formLoading.value = false
-    emit('closeDialog')
-    done()
-  })
-}
+const { formLoading, title, formRef, submitForm, cancel, handleClose } = useSuperTableDialog(props, url, emit, form, getDetails)
 </script>
 <style lang="scss"></style>

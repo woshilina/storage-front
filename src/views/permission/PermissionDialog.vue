@@ -41,6 +41,9 @@ import http from '@/utils/http.js'
 import { useMenuStore } from '@/stores/permission'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
+import { useSuperTableDialog } from '@/components/super-table-v2/super-table-dialog'
+const url = '/api/v1/permissions'
+
 const menuStore = useMenuStore()
 const customTreeData = (arr) =>
   arr.map((item) => ({
@@ -52,8 +55,6 @@ const customTreeData = (arr) =>
 const treeData = customTreeData(menuStore.menus)
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
-const title = ref('新增')
-const formRef = ref()
 const form = reactive({
   name: '',
   parentId: null,
@@ -62,18 +63,6 @@ const form = reactive({
   code: '',
   icon: '',
   orderNum: 1
-})
-const isEdit = computed(() => {
-  return !!props.itemId
-})
-const formLoading = ref(false)
-onMounted(() => {
-  if (props.itemId) {
-    title.value = '编辑'
-    getDetails()
-  } else {
-    title.value = '新增'
-  }
 })
 
 // 获取详情
@@ -115,78 +104,6 @@ const rules = reactive({
     { type: 'number', message: '排序必须是一个数字' }
   ]
 })
-
-// 提交
-const submitForm = () => {
-  if (!formRef.value) return
-  formRef.value.validate((valid, fields) => {
-    if (valid) {
-      if (!isEdit.value) {
-        addSave()
-      } else {
-        editSave()
-      }
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-
-//新增保存
-const addSave = () => {
-  formLoading.value = true
-  http
-    .post('/api/v1/permissions', form)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '新增成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-
-// 编辑保存
-const editSave = () => {
-  formLoading.value = true
-  const params = {
-    parentId: form.parentId,
-    name: form.name,
-    url: form.url,
-    code: form.code,
-    type: form.type,
-    icon: form.icon,
-    orderNum: form.orderNum
-  }
-  http
-    .put(`/api/v1/permissions/${props.itemId}`, params)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '编辑成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-// 点击取消
-const cancel = () => {
-  emit('closeDialog')
-}
-const handleClose = (done) => {
-  ElMessageBox.confirm('确定关闭对话框吗?').then(() => {
-    formRef.value.resetFields()
-    formLoading.value = false
-    emit('closeDialog')
-    done()
-  })
-}
+const { formLoading, title, formRef, submitForm, cancel, handleClose } = useSuperTableDialog(props, url, emit, form, getDetails)
 </script>
 <style lang="scss"></style>

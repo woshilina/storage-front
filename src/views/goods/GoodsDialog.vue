@@ -26,15 +26,13 @@
   </CustomDialog>
 </template>
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { reactive } from 'vue'
 import http from '@/utils/http.js'
-import { validateID } from '@/utils/validate.js'
-import { ElMessageBox, ElMessage } from 'element-plus'
 import CustomDialog from '@/components/custom-dialog/custom-dialog.vue'
+import { useSuperTableDialog } from '@/components/super-table-v2/super-table-dialog'
+const url = '/api/v1/goods'
 const props = defineProps(['itemId'])
 const emit = defineEmits(['queryTableData', 'closeDialog'])
-const title = ref('新增')
-const formRef = ref()
 const form = reactive({
   name: '',
   specification: '',
@@ -43,25 +41,12 @@ const form = reactive({
   remark: '',
   email: ''
 })
-const isEdit = computed(() => {
-  return !!props.itemId
-})
-const formLoading = ref(false)
-
-onMounted(() => {
-  if (props.itemId) {
-    title.value = '编辑'
-    getDetails()
-  } else {
-    title.value = '新增'
-  }
-})
 
 // 获取详情
 const getDetails = async () => {
   formLoading.value = true
   await http
-    .get(`/api/v1/goods/${props.itemId}`)
+    .get(`${url}/${props.itemId}`)
     .then((res) => {
       const { name, specification, quantity, weight, remark } = res.data
       form.name = name
@@ -74,6 +59,7 @@ const getDetails = async () => {
       formLoading.value = false
     })
 }
+const { formLoading, title, formRef, submitForm, cancel, handleClose } = useSuperTableDialog(props, url, emit, form, getDetails)
 
 const rules = reactive({
   name: [
@@ -86,80 +72,9 @@ const rules = reactive({
     { type: 'number', message: '数量应该是数字' }
   ],
   weight: [
-    { required: true, message: '请输入重量' },
+    { required: true, message: '请输入重量' }
     // { type: 'number', message: '重量应该是数字' }
   ]
 })
-
-// 提交
-const submitForm = () => {
-  if (!formRef.value) return
-  formRef.value.validate((valid, fields) => {
-    if (valid) {
-      if (!isEdit.value) {
-        addSave()
-      } else {
-        editSave()
-      }
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-
-//新增保存
-const addSave = () => {
-  formLoading.value = true
-  http
-    .post('/api/v1/goods', form)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '新增成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-
-// 编辑保存
-const editSave = () => {
-  formLoading.value = true
-  const params = {
-    name: form.name,
-    specification: form.specification,
-    quantity: form.quantity,
-    weight: form.weight,
-    remark: form.remark,
-  }
-  http
-    .put(`/api/v1/goods/${props.itemId}`, params)
-    .then(() => {
-      emit('closeDialog')
-      ElMessage({
-        message: '编辑成功',
-        type: 'success'
-      })
-      emit('queryTableData')
-    })
-    .finally(() => {
-      formLoading.value = false
-    })
-}
-// 点击取消
-const cancel = () => {
-  emit('closeDialog')
-}
-const handleClose = (done) => {
-  ElMessageBox.confirm('确定关闭对话框吗?').then(() => {
-    formRef.value.resetFields()
-    formLoading.value = false
-    emit('closeDialog')
-    done()
-  })
-}
 </script>
 <style lang="scss"></style>
