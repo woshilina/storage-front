@@ -8,21 +8,21 @@
       <el-radio-group v-model="myColorMode" @change="changeTheme">
         <div class="radio-item">
           <div class="top-icon">
-            <el-icon :size="size" :color="myColorMode=='light'?'#409eff':''"><Sunny /></el-icon>
+            <el-icon :size="size" :color="myColorMode == 'light' ? '#409eff' : ''"><Sunny /></el-icon>
           </div>
           <div class="bottom-radio"><el-radio value="light" size="large">浅色模式</el-radio></div>
         </div>
         <div class="radio-item mlr20">
           <div class="top-icon">
-            <el-icon :size="size" :color="myColorMode=='dark'?'#409eff':''"><Moon /></el-icon>
+            <el-icon :size="size" :color="myColorMode == 'dark' ? '#409eff' : ''"><Moon /></el-icon>
           </div>
           <div class="bottom-radio"><el-radio value="dark" size="large">深色模式</el-radio></div>
         </div>
         <div class="radio-item">
           <div class="top-icon">
-            <el-icon :size="size" :color="myColorMode=='default'?'#409eff':''"><Monitor /></el-icon>
+            <el-icon :size="size" :color="myColorMode == 'auto' ? '#409eff' : ''"><Monitor /></el-icon>
           </div>
-          <div class="bottom-radio"><el-radio value="default" size="large">跟随系统</el-radio></div>
+          <div class="bottom-radio"><el-radio value="auto" size="large">跟随系统</el-radio></div>
         </div>
       </el-radio-group>
     </div>
@@ -55,7 +55,7 @@ const changeTheme = (val) => {
       font-size: 18px;
       margin-bottom: 15px;
     }
-    .el-radio-group{
+    .el-radio-group {
       width: 100%;
       margin-top: 20px;
     }
